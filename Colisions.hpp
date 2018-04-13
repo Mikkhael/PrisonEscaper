@@ -398,7 +398,6 @@ template <class T>
 class ShapeCollider : public Collider
 {
 	
-public:
 	T positionedCollider;
 public:
     T collider;

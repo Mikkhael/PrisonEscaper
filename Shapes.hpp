@@ -40,7 +40,7 @@ public:
 	{}
 	
 	Rect(const sf::Rect<T>& r)
-		: position(r.left, r.right), size(r.width, r.height)
+		: position(r.left, r.top), size(r.width, r.height)
 	{}
 	
 	operator sf::Rect<T>()

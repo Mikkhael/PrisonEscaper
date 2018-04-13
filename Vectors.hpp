@@ -227,13 +227,11 @@ namespace Vectors
     const Vector2d null(0,0);
 }
 
-class Transform
+struct Transform
 {
-public:
-	
-	Vector2<double> position;
-	Vector2<double> scale;
-	double rotation;
+	Vector2<double> position= Vectors::null;
+	Vector2<double> scale	= Vectors::units;
+	double rotation 		= 0;
 };
 
 #endif // VECTORS_HPP_INCLUDED

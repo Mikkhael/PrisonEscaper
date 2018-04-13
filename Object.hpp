@@ -152,17 +152,61 @@ public:
 	Transform transform;
 	Collider* collider;
 	
+	
+	
 	virtual void update(double deltaTime)
 	{
 		return;
 	}
 	
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates& states) = 0;
+	virtual void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default) = 0;
 	
 	
-	bool testCollision()
+	Collision::Result testCollision(const Collider& collider_) const
+	{
+		if(collider)
+		{
+			return collider->test(collider_);
+		}
+		return Collision::Result(false);
+	}
+	Collision::Result testCollision(const Actor& actor_) const
+	{
+		if(collider && actor_.collider)
+		{
+			return collider->test(*actor_.collider);
+		}
+		return Collision::Result(false);
+	}
 	
-	virtual ~Actor(){};
+	template<class T>
+    void setCollider(const T& shape)
+    {
+        if(collider)
+        {
+            delete collider;
+            collider = new ShapeCollider<T>(shape);
+        }
+        else
+        {
+            collider = new ShapeCollider<T>(shape);
+        }
+    }
+    
+    
+    
+	
+	Actor()
+		: collider(nullptr)
+	{}
+	
+	virtual ~Actor()
+	{
+		if(collider)
+		{
+			delete collider;
+		}
+	}
 	
 };
 
@@ -181,20 +225,59 @@ public:
 	
 	sf::Sprite sprite;
 	
-	SpriteActor(sf::Texture* texture, const sf::IntRect& rect)
+	virtual void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default)
+	{
+		updateTransform();
+		target.draw(sprite, states);
+	}
+	
+	
+	
+	SpriteActor(const sf::Texture& texture, const sf::IntRect& rect)
 		: sprite(texture)
 	{
 		sprite.setTextureRect(rect);
 	}
 	
-	virtual void draw(sf::RenderTarget& target, sf::RenderStates& states)
-	{
-		updateTransform();
-		target.draw(sprite);
-	}
-	
 	virtual ~SpriteActor(){};
 	
+};
+
+class AnimatedSpriteActor : public Actor
+{
+	
+	void updateTransform()
+	{
+		sprite.setPosition(transform.position);
+		sprite.setScale(transform.scale);
+		sprite.setRotation(transform.rotation);
+	}
+	
+public:
+	
+	AnimatedSprite sprite;
+	
+	
+	virtual void update(double deltaTime)
+	{
+		sprite.updateFrame(deltaTime);
+	}
+	
+	virtual void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default)
+	{
+		updateTransform();
+		target.draw(sprite, states);
+	}
+	
+	
+	
+	AnimatedSpriteActor(const AnimatedSpritePreset& preset)
+		: sprite(preset)
+	{
+		
+	}
+	
+	virtual ~AnimatedSpriteActor(){};
 };
 
 

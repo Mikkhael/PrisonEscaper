@@ -115,9 +115,9 @@ enum AnimationState
 };
 
 
-class AnimatedSpritePreset
+struct AnimatedSpritePreset
 {
-	string 			textureName;
+	std::string 	textureName;
 	double 			length;
 	unsigned int	framesCount;
 	unsigned int	framesPerRow;
@@ -132,7 +132,7 @@ class AnimatedSpritePreset
 				framesPerRow== a.framesPerRow;
 	}
 	
-	AnimatedSpritePreset(textureName_, baseFrame_, length_=0, framesCount_=1, framesPerRow_=0)
+	AnimatedSpritePreset(const std::string& textureName_, const sf::IntRect& baseFrame_, double length_=0, unsigned int framesCount_=1, unsigned int framesPerRow_=0)
 		: textureName(textureName_), baseFrame(baseFrame_), length(length_), framesCount(framesCount_), framesPerRow(framesPerRow_)
 	{}
 };
@@ -164,6 +164,8 @@ class AnimatedSprite : public sf::Sprite
 	AnimatedSpritePreset preset;
 	
 public:
+	
+	AnimationState state;
 	
 	void reset()
 	{
@@ -220,8 +222,8 @@ public:
 		}
 	}	
 	
-	AnimatedSprite(const AnimatedSpritePreset& preset_)
-		: sf::Sprite(textureManager.get(preset_.textureName)), preset(preset_)
+	AnimatedSprite(const AnimatedSpritePreset& preset_, AnimationState state_ = Loop)
+		: sf::Sprite(textureManager.get(preset_.textureName)), preset(preset_), state(state_)
 	{}
 	
 	void setPreset(const AnimatedSpritePreset& preset_, bool noReset = false)
