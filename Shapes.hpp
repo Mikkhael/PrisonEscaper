@@ -107,6 +107,15 @@ public:
 		}
 		return Vector2<T>(position.x + length, position.y);
 	}
+	
+	Vector2<T> getVector() const
+	{
+		if(isVertical)
+		{
+			return Vector2<T>(0, length);
+		}
+		return Vector2<T>(length, 0);
+	}
 };
 
 #endif // SHAPES_HPP_INCLUDED

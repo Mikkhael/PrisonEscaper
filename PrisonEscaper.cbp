@@ -58,9 +58,11 @@
 		<Unit filename="Animations.hpp" />
 		<Unit filename="Colisions.hpp" />
 		<Unit filename="Object.hpp" />
+		<Unit filename="Room.hpp" />
 		<Unit filename="Shapes.hpp" />
 		<Unit filename="TextureManager.hpp" />
 		<Unit filename="Vectors.hpp" />
+		<Unit filename="WallActor.hpp" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

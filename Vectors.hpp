@@ -4,11 +4,14 @@
 #include <iostream>
 #include <cmath>
 
-#define M_PI       3.14159265358979323846
-#define M_PI_2     1.57079632679489661923
-#define M_PI_180   0.01745329251994329577
+constexpr double	M_PI 		= 3.14159265358979323846;
+constexpr double  	M_PI_2		= 1.57079632679489661923;
+constexpr double  	M_PI_180	= 0.01745329251994329577;
 
-#define TORAD(x) x*M_PI_180
+inline double toRadians(double degrees)
+{
+	return degrees*M_PI_180;
+}
 
 template<typename T>
 class Vector2
@@ -17,17 +20,7 @@ public:
     
     T x;
     T y;
-
-    Vector2(){}
-    Vector2(T _x, T _y)
-        : x(_x), y(_y)
-    {}
-    
-    template<typename _T>
-    Vector2(const sf::Vector2<_T>& v)
-        : x(v.x), y(v.y)
-    {}
-    
+        
     template<typename T_>
     Vector2<T> operator+(const Vector2<T_>& v) const
     {
@@ -138,11 +131,31 @@ public:
     Vector2<T> rotate(double angle) const;
     Vector2<T>& rotateSelf(double angle);
     
+    
+    
+    Vector2(){}
+    Vector2(T _x, T _y)
+        : x(_x), y(_y)
+    {}
+        
+    template<typename _T>
+    Vector2(const sf::Vector2<_T>& v)
+        : x(v.x), y(v.y)
+    {}
+    
+    
     template<typename _T>
     operator sf::Vector2<_T>() const
     {
         return sf::Vector2<_T>(x, y);
     }
+    
+	template<typename _T>
+    operator Vector2<_T>() const
+    {
+        return Vector2<_T>(x, y);
+    }
+    
     
     
     void SHOW()
@@ -231,7 +244,33 @@ struct Transform
 {
 	Vector2<double> position= Vectors::null;
 	Vector2<double> scale	= Vectors::units;
-	double rotation 		= 0;
+	double rotation			= 0;
 };
+
+class Transformable
+{
+public:
+	virtual void setPosition (const Vector2d& 	position)	= 0;
+	virtual void setScale	 (const Vector2d&	scale) 		= 0;
+	virtual void setRotation (double 			rotation) 	= 0;
+	
+	virtual Vector2d getPosition() 	const  	= 0;
+	virtual Vector2d getScale()		const	= 0;
+	virtual double	 getRotation()	const	= 0;
+	
+	void move(const Vector2d& position)
+	{
+		setPosition(getPosition() + position);
+	}
+	void scale(const Vector2d& scale)
+	{
+		setScale(getScale() * scale);
+	}
+	void rotate(double rotation)
+	{
+		setRotation(getRotation() + rotation);
+	}
+};
+
 
 #endif // VECTORS_HPP_INCLUDED

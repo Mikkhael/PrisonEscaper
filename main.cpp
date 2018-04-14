@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "Colisions.hpp"
-#include "WallActor.hpp"
+#include "Room.hpp"
 
 int main()
 {
@@ -19,18 +19,23 @@ int main()
 	
 	
 	WallActor wall(WallTypes::Bricks);
-	wall.transform.position = Vector2d(100, 20);
+	wall.setPosition(Vector2d(100, 20));
 	wall.setSize(Vector2i(200, 600));
 	
 	
-	double offsetCounter = 0;
+	Room room1(Rect<double>(10, 15, 500, 155), WallTypes::Rocks);
+	Room room2(Rect<double>(100, 100, 40, 40), WallTypes::Bricks, false);
 		
 	sf::Clock clock;
-    double deltaTime = 0;
+    double deltaTime   = 0;
+    double currentTime = clock.getElapsedTime().asSeconds();
+	double lastTime    = currentTime;
 		
     while (window.isOpen())
     {
-    	deltaTime = clock.restart().asSeconds();
+    	currentTime = clock.getElapsedTime().asSeconds();
+    	deltaTime	= currentTime - lastTime;
+    	lastTime	= currentTime;
     	
         sf::Event event;
         while (window.pollEvent(event))
@@ -41,17 +46,8 @@ int main()
 
         window.clear();
         
-        
-        offsetCounter += deltaTime*15;
-        while(offsetCounter > 1.0)
-		{
-			wall.setOffset(Vector2i(wall.getOffset().x + 1, 0));
-			offsetCounter -= 1.0;
-		}
-		
-        wall.draw(window);
-        
-        
+        room1.draw(window);
+        room2.draw(window);
         
         window.display();
     }

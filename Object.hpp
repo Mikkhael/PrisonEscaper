@@ -146,20 +146,21 @@ public:
 };
 */
 
-class Actor
+
+class Actor : public Transformable
 {
 public:
-	Transform transform;
 	Collider* collider;
-	
-	
 	
 	virtual void update(double deltaTime)
 	{
 		return;
 	}
 	
-	virtual void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default) = 0;
+	virtual void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default) const
+	{
+		return;
+	}
 	
 	
 	Collision::Result testCollision(const Collider& collider_) const
@@ -167,6 +168,14 @@ public:
 		if(collider)
 		{
 			return collider->test(collider_);
+		}
+		return Collision::Result(false);
+	}
+	Collision::Result testCollision(const Collider* collider_) const
+	{
+		if(collider && collider_)
+		{
+			return collider->test(*collider_);
 		}
 		return Collision::Result(false);
 	}
@@ -212,22 +221,60 @@ public:
 
 
 class SpriteActor : public Actor
-{
-	
-	void updateTransform()
-	{
-		sprite.setPosition(transform.position);
-		sprite.setScale(transform.scale);
-		sprite.setRotation(transform.rotation);
-	}
-	
+{	
 public:
-	
+		
 	sf::Sprite sprite;
 	
-	virtual void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default)
+	// Transformable
+	virtual void setPosition (const Vector2d& 	position)
 	{
-		updateTransform();
+		sprite.setPosition(position);
+	}
+	virtual void setScale	 (const Vector2d&	scale)
+	{
+		sprite.setScale(scale);
+	}
+	virtual void setRotation (double 			rotation)
+	{
+		sprite.setRotation(rotation);
+	}
+	
+	virtual Vector2d getPosition() 	const
+	{
+		return sprite.getPosition();
+	}
+	virtual Vector2d getScale() 	const
+	{
+		return sprite.getPosition();
+	}
+	virtual double	 getRotation()	const
+	{
+		return sprite.getRotation();
+	}
+	////////
+	
+	void setSize(const Vector2i& newSize)
+	{
+		sprite.setTextureRect(sf::IntRect(sprite.getTextureRect().left, sprite.getTextureRect().top, newSize.x, newSize.y));
+	}
+	Vector2i getSize() const
+	{
+		return Rect<int>(sprite.getTextureRect()).size;
+	}
+	
+	void setOffset(const Vector2i& newOffset)
+	{
+		sprite.setTextureRect(sf::IntRect(newOffset.x, newOffset.y, sprite.getTextureRect().width, sprite.getTextureRect().height));
+	}
+	Vector2i getOffset() const
+	{
+		return Rect<int>(sprite.getTextureRect()).position;
+	}
+	
+	
+	virtual void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default) const
+	{
 		target.draw(sprite, states);
 	}
 	
@@ -239,23 +286,54 @@ public:
 		sprite.setTextureRect(rect);
 	}
 	
-	virtual ~SpriteActor(){};
+	virtual ~SpriteActor(){}
 	
 };
 
 class AnimatedSpriteActor : public Actor
 {
-	
-	void updateTransform()
-	{
-		sprite.setPosition(transform.position);
-		sprite.setScale(transform.scale);
-		sprite.setRotation(transform.rotation);
-	}
-	
 public:
 	
 	AnimatedSprite sprite;
+	
+	// Transformable
+	virtual void setPosition (const Vector2d& 	position)
+	{
+		sprite.setPosition(position);
+	}
+	virtual void setScale	 (const Vector2d&	scale)
+	{
+		sprite.setScale(scale);
+	}
+	virtual void setRotation (double 			rotation)
+	{
+		sprite.setRotation(rotation);
+	}
+	
+	virtual Vector2d getPosition() 	const
+	{
+		return sprite.getPosition();
+	}
+	virtual Vector2d getScale() 	const
+	{
+		return sprite.getPosition();
+	}
+	virtual double	 getRotation()	const
+	{
+		return sprite.getRotation();
+	}
+	//////////
+	
+	Vector2i getSize() const
+	{
+		return Rect<int>(sprite.getTextureRect()).size;
+	}
+	
+	Vector2i getOffset() const
+	{
+		return Rect<int>(sprite.getTextureRect()).position;
+	}
+	
 	
 	
 	virtual void update(double deltaTime)
@@ -263,12 +341,10 @@ public:
 		sprite.updateFrame(deltaTime);
 	}
 	
-	virtual void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default)
+	virtual void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default) const
 	{
-		updateTransform();
 		target.draw(sprite, states);
 	}
-	
 	
 	
 	AnimatedSpriteActor(const AnimatedSpritePreset& preset)
@@ -277,7 +353,7 @@ public:
 		
 	}
 	
-	virtual ~AnimatedSpriteActor(){};
+	virtual ~AnimatedSpriteActor(){}
 };
 
 

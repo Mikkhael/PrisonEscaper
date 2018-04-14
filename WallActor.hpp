@@ -25,22 +25,9 @@ class WallActor : public SpriteActor
 {
 public:
 	
-	void setSize(const Vector2i& newSize)
+	Rect<double> getRect() const
 	{
-		sprite.setTextureRect(sf::IntRect(sprite.getTextureRect().left, sprite.getTextureRect().top, newSize.x, newSize.y));
-	}
-	Vector2i getSize()
-	{
-		return Rect<int>(sprite.getTextureRect()).size;
-	}
-	
-	void setOffset(const Vector2i& newOffset)
-	{
-		sprite.setTextureRect(sf::IntRect(newOffset.x, newOffset.y, sprite.getTextureRect().width, sprite.getTextureRect().height));
-	}
-	Vector2i getOffset()
-	{
-		return Rect<int>(sprite.getTextureRect()).position;
+		return Rect<double>(getPosition(), getSize());
 	}
 	
 	

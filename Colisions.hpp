@@ -390,7 +390,7 @@ public:
     virtual Collision::Result test(const Rect<double>&) const =0;
     virtual Collision::Result test(const Circle<double>&) const =0;
     virtual Collision::Result test(const SimpleSegment<double>&) const =0;
-    virtual void updateCollider(const Transform&) =0;
+    virtual void updateCollider(const Transformable&) =0;
     virtual void updateCollider(const Vector2<double>&, const Vector2<double>&, const double&) =0;
 };
 
@@ -422,9 +422,9 @@ public:
         return Collision::test(c, positionedCollider);
     }
 
-    virtual void updateCollider(const Transform& transform)
+    virtual void updateCollider(const Transformable& transform)
     {
-        _getPositionedCollider(collider, positionedCollider, transform.position, transform.scale, transform.rotation);
+        _getPositionedCollider(collider, positionedCollider, transform.getPosition(), transform.getScale(), transform.getRotation());
     }
     virtual void updateCollider(const Vector2<double>& position, const Vector2<double>& scale, const double& rotation)
     {
