@@ -89,7 +89,8 @@ namespace Collision
 	{
 		double xPenetration = 0;
 		double yPenetration = 0;
-		
+		double distance     = 0;
+		bool   value        = false;
 		
 		operator bool() const
 		{
@@ -106,11 +107,11 @@ namespace Collision
 			return Vector2<double>(xPenetration, yPenetration);
 		}
 		
-		Result(bool v = false, double x = 0, double y = 0)
-			: value(v), xPenetration(x), yPenetration(y)
+		Result(bool v = false, double x = 0, double y = 0, double dist = 0)
+			: value(v), xPenetration(x), yPenetration(y), distance(dist)
 		{}
-		Result(double x, double y)
-			: value(x != 0 || y != 0), xPenetration(x), yPenetration(y)
+		Result(double x, double y, double dist = 0)
+			: value(x != 0 || y != 0), xPenetration(x), yPenetration(y), distance(dist)
 		{}
 		
 		static Result& getBetter(Result& r1, Result& r2)
@@ -133,9 +134,6 @@ namespace Collision
 				return r1;
 			return r2;
 		}
-		
-	private:
-		bool value = false;
 	};
 	
 	// Point - Range
@@ -218,11 +216,43 @@ namespace Collision
 	
 	// SimpleSegment - SimpleSegment
 	template <class T>
-	Result test(const SimpleSegment<T>& ssegment1, const SimpleSegment<T>& ssegment2)
+	Result test(const SimpleSegment<T>& ssegment1, const SimpleSegment<T>& ssegment2, double maxDistance = -1)
 	{
-		// TODO
-		
-		return Result(false);
+		if(ssegment1.isVertical != ssegment2.isVertical)
+        {
+            if(ssegment1.isVertical)
+            {
+                Result r1 = test(ssegment1.getRange(), ssegment2.position.y);
+                Result r2 = test(ssegment1.position.x, ssegment2.getRange());
+                
+                return Result(r1 && r2, r2.xPenetration, r1.xPenetration);
+            }
+            else
+            {
+                Result r1 = test(ssegment1.getRange(), ssegment2.position.x);
+                Result r2 = test(ssegment1.position.y, ssegment2.getRange());
+                
+                return Result(r1 && r2, r1.xPenetration, r2.xPenetration);
+            }
+        }
+		else
+        {
+            Result rangeRes = test(ssegment1.getRange(), ssegment2.getRange());
+            if(ssegment1.isVertical)
+            {
+                rangeRes.yPenetration   = rangeRes.xPenetration;
+                rangeRes.xPenetration   = 0;
+                rangeRes.distance       = ssegment2.position.x - ssegment1.position.x;
+            }
+            else
+            {
+                rangeRes.distance       = ssegment2.position.y - ssegment1.position.y;
+            }
+            if(maxDistance >= 0){
+                rangeRes.value = std::abs(rangeRes.distance) <= maxDistance; 
+            }
+            return rangeRes;
+        }
 	}
 	
 	// Rect - Rect

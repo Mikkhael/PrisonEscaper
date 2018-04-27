@@ -116,6 +116,53 @@ public:
 		}
 		return Vector2<T>(length, 0);
 	}
+	
+	T getStartValue() const
+	{
+	    if(isVertical)
+            return position.y;
+        return position.x;
+	}
+	void setStartValue(T val)
+	{
+        if(isVertical)
+        {
+            length -= val - position.y;
+            position.y = val;
+        }
+        else
+        {
+            length -= val - position.x;
+            position.x = val;
+        }
+	}
+	T getEndValue() const
+	{
+	    if(isVertical)
+            return position.y + length;
+        return position.x + length;
+	}
+	void setEndValue(T val)
+	{
+        if(isVertical)
+            length = val - position.y;
+        else
+            length = val - position.x;
+	}
+	
+	T getOffset() const
+	{
+	    if(isVertical)
+            return position.x;
+        return position.y;
+	}
+	void setOffset(T val)
+	{
+	    if(isVertical)
+            position.x = val;
+        else
+            position.y = val;
+	}
 };
 
 #endif // SHAPES_HPP_INCLUDED

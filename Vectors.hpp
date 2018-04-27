@@ -112,6 +112,19 @@ public:
     }
     
     template<typename T_>
+    Vector2<T>& merge(Vector2<T_> v) const
+    {
+        return Vector2<T>(std::max(x, v.x), std::min(y, v.y));
+    }
+    template<typename T_>
+    Vector2<T>& mergeSelf(Vector2<T_> v) const
+    {
+        x = std::max(x, v.x);
+        y = std::min(y, v.y);
+        return *this;
+    }
+    
+    template<typename T_>
     Vector2<T> resize(T_ size) const
     {
     	return normalize()*size;

@@ -17,14 +17,21 @@ int main()
 	
 	
 	
-	
 	WallActor wall(WallTypes::Bricks);
 	wall.setPosition(Vector2d(100, 20));
 	wall.setSize(Vector2i(200, 600));
 	
 	
-	Room room1(Rect<double>(10, 15, 500, 155), WallTypes::Rocks);
-	Room room2(Rect<double>(100, 100, 40, 40), WallTypes::Bricks, false);
+	std::vector<Room> rooms;
+	
+	rooms.emplace_back(Rect<double>(50, 15, 390, 155), WallTypes::Rocks);
+	rooms.emplace_back(Rect<double>(25, 170, 200, 30), WallTypes::Bricks);
+	rooms.emplace_back(Rect<double>(40, 200, 400, 20), WallTypes::Bricks);
+	rooms.emplace_back(Rect<double>(440, 15, 50, 300), WallTypes::Bricks);
+	rooms.emplace_back(Rect<double>(100, 100, 40, 40), WallTypes::Bricks, false);
+		
+    Room::mergeAll(rooms);
+    
 		
 	sf::Clock clock;
     double deltaTime   = 0;
@@ -46,8 +53,10 @@ int main()
 
         window.clear();
         
-        room1.draw(window);
-        room2.draw(window);
+        for(auto& room : rooms)
+        {
+            room.draw(window);
+        }
         
         window.display();
     }
