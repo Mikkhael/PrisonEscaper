@@ -137,11 +137,19 @@ struct AnimatedSpritePreset
 	{}
 };
 
+namespace AnimatedSpritePresets
+{
+	const AnimatedSpritePreset	PlayerIdle		= AnimatedSpritePreset("assets/creatures/player.bmp", 	sf::IntRect(0,0,16,16), 	2, 		2);
+	const AnimatedSpritePreset	PlayerWalk		= AnimatedSpritePreset("assets/creatures/player.bmp", 	sf::IntRect(16,16,16,16), 	0.5, 	4);
+}
+
 class AnimatedSprite : public sf::Sprite
 {
 	double 			frameCounter 	= 0;
 	unsigned int 	frame			= 0;
 	sf::IntRect		frameRect;
+	
+	AnimatedSpritePreset preset;
 	
 	inline double getFrameLength() const
 	{
@@ -150,19 +158,17 @@ class AnimatedSprite : public sf::Sprite
 	
 	void updateTextureRect()
 	{
-		unsigned int yOffset = preset.framesPerRow == 0 ? frame/preset.framesPerRow : 0;
-		unsigned int xOffset = preset.framesPerRow == 0 ? frame%preset.framesPerRow : frame;
+		unsigned int yOffset = preset.framesPerRow != 0 ? frame/preset.framesPerRow : 0;
+		unsigned int xOffset = preset.framesPerRow != 0 ? frame%preset.framesPerRow : frame;
 		
-		frameRect = sf::IntRect( 	preset.baseFrame.left 	+ xOffset,
-									preset.baseFrame.top 	+ yOffset,
+				
+		frameRect = sf::IntRect( 	preset.baseFrame.left 	+ xOffset * preset.baseFrame.width,
+									preset.baseFrame.top 	+ yOffset * preset.baseFrame.height,
 									preset.baseFrame.width,
 									preset.baseFrame.height );
 									
 		setTextureRect(frameRect);
 	}
-	
-	AnimatedSpritePreset preset;
-	
 public:
 	
 	AnimationState state;

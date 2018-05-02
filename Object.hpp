@@ -146,11 +146,32 @@ public:
 };
 */
 
-
 class Actor : public Transformable
 {
 public:
-	Collider* collider;
+	Collider* 	collider;
+	
+	
+	bool		isKinematic = false;
+	Vector2d 	velocity	= Vectors::null;
+	
+	void checkCollisions(std::vector<Actor> actors, void collisionHandler(const Collision::Result&, Actor&))
+	{
+		for(auto& actor : actors)
+		{
+			Collision::Result res = testCollision(actor);
+			if(res)
+			{
+				collisionHandler(res, actor);
+			}
+		}
+	}
+	
+	void updateKinematics(double deltaTime, double drag = 0, Vector2d step = Vectors::null)
+	{
+		setPosition(velocity * deltaTime + step);
+		velocity *= (1-drag*deltaTime);
+	}
 	
 	virtual void update(double deltaTime)
 	{

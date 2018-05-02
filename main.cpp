@@ -1,10 +1,21 @@
 #include <SFML/Graphics.hpp>
+#include "Keyboard.hpp"
 #include "Colisions.hpp"
 #include "Room.hpp"
+#include "Player.hpp"
 
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Prison Escaper");
+	
+	Controls::setKeyMapping(sf::Keyboard::A, 		Action::left);
+	Controls::setKeyMapping(sf::Keyboard::W, 		Action::up);
+	Controls::setKeyMapping(sf::Keyboard::S, 		Action::down);
+	Controls::setKeyMapping(sf::Keyboard::D, 		Action::right);
+	Controls::setKeyMapping(sf::Keyboard::Space, 	Action::jump);
+	
+	
+	
 	
 	Collider* c1 = new RectCollider(Rect<double>(40, -100, 30, 200));
 	Collider* c2 = new CircleCollider( Circle<double>(Vector2<double>(0,10), 50.0));
@@ -29,6 +40,9 @@ int main()
 	rooms.emplace_back(Rect<double>(40, 200, 400, 20), WallTypes::Bricks);
 	rooms.emplace_back(Rect<double>(440, 15, 50, 300), WallTypes::Bricks);
 	rooms.emplace_back(Rect<double>(100, 100, 40, 40), WallTypes::Bricks, false);
+	
+	
+	Player player(Vector2d(20, 50));
 		
     Room::mergeAll(rooms);
     
@@ -50,13 +64,30 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-
+		
+		Controls::updateKeyStates();
+		
+		if(Controls::isPressed(Action::jump))
+		{
+			std::cout << "SPACE";
+			if(Controls::isTapped((Action::jump)))
+			{
+				std::cout << "  TAPPED";
+			}
+			std::cout << std::endl;
+		}
+		
+		
+        player.update(deltaTime);
+        
+        
         window.clear();
         
         for(auto& room : rooms)
         {
             room.draw(window);
         }
+        player.draw(window);
         
         window.display();
     }
