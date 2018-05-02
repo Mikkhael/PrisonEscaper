@@ -169,7 +169,7 @@ public:
 	
 	void updateKinematics(double deltaTime, double drag = 0, Vector2d step = Vectors::null)
 	{
-		setPosition(velocity * deltaTime + step);
+		move(velocity * deltaTime + step);
 		velocity *= (1-drag*deltaTime);
 	}
 	

@@ -22,19 +22,19 @@ public:
 		
 		if(Controls::isPressed(Action::right))
 		{
-			velocity += Vectors::foreward	* speed;
+			velocity += Vectors::foreward	* speed * deltaTime;
 		}
 		if(Controls::isPressed(Action::left))
 		{
-			velocity += Vectors::backward 	* speed;
+			velocity += Vectors::backward 	* speed * deltaTime;
 		}
 		if(Controls::isPressed(Action::up))
 		{
-			velocity += Vectors::down 		* speed;
+			velocity += Vectors::down 		* speed * deltaTime;
 		}
 		if(Controls::isPressed(Action::down))
 		{
-			velocity += Vectors::up		 	* speed;
+			velocity += Vectors::up		 	* speed * deltaTime;
 		}
 		
 		std::cout<< getPosition().x << "\t\t" << getPosition().y <<std::endl;
