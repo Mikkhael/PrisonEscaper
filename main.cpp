@@ -34,17 +34,18 @@ int main()
 	
 	
 	std::vector<Room> rooms;
+	std::vector<Platform> platforms;
 	
-	rooms.emplace_back(Rect<double>(50, 15, 390, 155), WallTypes::Rocks);
-	rooms.emplace_back(Rect<double>(25, 170, 200, 30), WallTypes::Bricks);
-	rooms.emplace_back(Rect<double>(40, 200, 400, 20), WallTypes::Bricks);
-	rooms.emplace_back(Rect<double>(440, 15, 50, 300), WallTypes::Bricks);
-	rooms.emplace_back(Rect<double>(100, 100, 40, 40), WallTypes::Bricks, false);
+	rooms.emplace_back(Rect<double>(50, 15, 390, 155), WallTypes::Rocks,  platforms);
+	rooms.emplace_back(Rect<double>(25, 170, 200, 30), WallTypes::Bricks, platforms);
+	rooms.emplace_back(Rect<double>(40, 200, 400, 20), WallTypes::Bricks, platforms);
+	rooms.emplace_back(Rect<double>(440, 15, 50, 300), WallTypes::Bricks, platforms);
+	rooms.emplace_back(Rect<double>(100, 100, 40, 40), WallTypes::Bricks);
 	
 	
 	Player player(Vector2d(20, 50));
 		
-    Room::mergeAll(rooms);
+    Platform::mergeAll(platforms);
     
 		
 	sf::Clock clock;
@@ -86,6 +87,10 @@ int main()
         for(auto& room : rooms)
         {
             room.draw(window);
+        }
+        for(auto& platform : platforms)
+        {
+            platform.draw(window);
         }
         player.draw(window);
         

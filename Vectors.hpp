@@ -194,15 +194,20 @@ template<typename T>
 Vector2<double> Vector2<T>::normalize() const
 {
     auto mag = magnatude();
-    return Vector2<double>(x/mag, y/mag);
+    if(mag != 0)
+        return Vector2<double>(x/mag, y/mag);
+    return Vector2<double>(0, 0);
 }
 
 template<typename T>
 Vector2<T>& Vector2<T>::normalizeSelf()
 {
     auto mag = magnatude();
-    x /= mag;
-    y /= mag;
+    if(mag != 0)
+    {
+        x /= mag;
+        y /= mag;        
+    }
     return *this;    
 }
 

@@ -9,7 +9,7 @@
 class Player : public AnimatedSpriteActor
 {
 	
-	double drag = 0.01;
+	double drag = 1;
 	double speed = 100;
 	
 public:
@@ -18,7 +18,6 @@ public:
 	virtual void update(double deltaTime)
 	{
 		AnimatedSpriteActor::update(deltaTime);
-		
 		
 		if(Controls::isPressed(Action::right))
 		{
@@ -37,7 +36,7 @@ public:
 			velocity += Vectors::up		 	* speed * deltaTime;
 		}
 		
-		std::cout<< getPosition().x << "\t\t" << getPosition().y <<std::endl;
+		std::cout<< velocity.x << "\t\t" << velocity.y <<std::endl;
 				
 		updateKinematics(deltaTime, drag);		
 	}
