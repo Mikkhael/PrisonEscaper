@@ -148,7 +148,7 @@ public:
 
 class Actor : public Transformable
 {
-    
+protected:
     void updateCollider()
     {
         if(collider)
@@ -258,17 +258,17 @@ public:
 	virtual void setPosition (const Vector2d& 	position)
 	{
 		sprite.setPosition(position);
-		updateCollider()
+		updateCollider();
 	}
 	virtual void setScale	 (const Vector2d&	scale)
 	{
 		sprite.setScale(scale);
-		updateCollider()
+		updateCollider();
 	}
 	virtual void setRotation (double 			rotation)
 	{
 		sprite.setRotation(rotation);
-		updateCollider()
+		updateCollider();
 	}
 	
 	virtual Vector2d getPosition() 	const
@@ -331,17 +331,17 @@ public:
 	virtual void setPosition (const Vector2d& 	position)
 	{
 		sprite.setPosition(position);
-		updateCollider()
+		updateCollider();
 	}
 	virtual void setScale	 (const Vector2d&	scale)
 	{
 		sprite.setScale(scale);
-		updateCollider()
+		updateCollider();
 	}
 	virtual void setRotation (double 			rotation)
 	{
 		sprite.setRotation(rotation);
-		updateCollider()
+		updateCollider();
 	}
 	
 	virtual Vector2d getPosition() 	const
