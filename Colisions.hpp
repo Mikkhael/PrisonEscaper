@@ -108,10 +108,10 @@ namespace Collision
 		}
 		
 		Result(bool v = false, double x = 0, double y = 0, double dist = 0)
-			: value(v), xPenetration(x), yPenetration(y), distance(dist)
+			: xPenetration(x), yPenetration(y), distance(dist), value(v)
 		{}
 		Result(double x, double y, double dist = 0)
-			: value(x != 0 || y != 0), xPenetration(x), yPenetration(y), distance(dist)
+			: xPenetration(x), yPenetration(y), distance(dist), value(x != 0 || y != 0)
 		{}
 		
 		static Result& getBetter(Result& r1, Result& r2)
@@ -420,8 +420,11 @@ public:
     virtual Collision::Result test(const Rect<double>&) const =0;
     virtual Collision::Result test(const Circle<double>&) const =0;
     virtual Collision::Result test(const SimpleSegment<double>&) const =0;
-    virtual void updateCollider(const Transformable&) =0;
-    virtual void updateCollider(const Vector2<double>&, const Vector2<double>&, const double&) =0;
+    virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, const double& rotation = 0) =0;
+    void updateCollider(const Transformable& transform )
+    {
+        updateCollider(transform.getPosition(), transform.getScale(), transform.getRotation());
+    }
 };
 
 template <class T>
@@ -451,22 +454,53 @@ public:
     {
         return Collision::test(c, positionedCollider);
     }
-
-    virtual void updateCollider(const Transformable& transform)
-    {
-        _getPositionedCollider(collider, positionedCollider, transform.getPosition(), transform.getScale(), transform.getRotation());
-    }
-    virtual void updateCollider(const Vector2<double>& position, const Vector2<double>& scale, const double& rotation)
+    virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, const double& rotation = 0)
     {
         _getPositionedCollider(collider, positionedCollider, position, scale, rotation);
     }
-
     virtual ~ShapeCollider(){};
 };
 
-typedef ShapeCollider<Rect<double> > RectCollider;
-typedef ShapeCollider<Circle<double> > CircleCollider;
-typedef ShapeCollider<SimpleSegment<double> > SimpleSegmentCollider;
+template <class T>
+class FixedShapeCollider : public Collider
+{
+	
+public:
+    T collider;
+    FixedShapeCollider(T c)
+        : collider(c)
+    {}
+
+    virtual Collision::Result test(const Collider& c) const
+    {
+        return c.test(collider);
+    }
+    virtual Collision::Result test(const Rect<double>& c) const
+    {
+        return Collision::test(c, collider);
+    }
+    virtual Collision::Result test(const Circle<double>& c) const
+    {
+        return Collision::test(c, collider);
+    }
+    virtual Collision::Result test(const SimpleSegment<double>& c) const
+    {
+        return Collision::test(c, collider);
+    }
+    virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, const double& rotation = 0)
+    {
+        return;
+    }
+    virtual ~FixedShapeCollider(){};
+};
+
+typedef ShapeCollider<Rect<double> >                RectCollider;
+typedef ShapeCollider<Circle<double> >              CircleCollider;
+typedef ShapeCollider<SimpleSegment<double> >       SimpleSegmentCollider;
+
+typedef FixedShapeCollider<Rect<double> >           FixedRectCollider;
+typedef FixedShapeCollider<Circle<double> >         FixedCircleCollider;
+typedef FixedShapeCollider<SimpleSegment<double> >  FixedSimpleSegmentCollider;
 
 
 #endif // COLISIONS_HPP_INCLUDED

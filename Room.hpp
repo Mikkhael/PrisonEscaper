@@ -2,22 +2,21 @@
 #define ROOM_HPP_INCLUDED
 
 #include "WallActor.hpp"
+#include "Colisions.hpp"
 #include <vector>
 #include <algorithm>
 
 #define DRAW_PLATFORMS
 
-class Platform
+class Platform : public FixedSimpleSegmentCollider
 {
 public:
-	
-	SimpleSegment<double> 	segment;
 	
 	static void merge(Platform& platform1, Platform& platform2)
 	{
 	    
-            SimpleSegment<double>& s1 = (platform1.segment.getStartValue() <= platform2.segment.getStartValue()) ? platform1.segment : platform2.segment;
-            SimpleSegment<double>& s2 = (platform1.segment.getStartValue() <= platform2.segment.getStartValue()) ? platform2.segment : platform1.segment;
+            SimpleSegment<double>& s1 = (platform1.collider.getStartValue() <= platform2.collider.getStartValue()) ? platform1.collider : platform2.collider;
+            SimpleSegment<double>& s2 = (platform1.collider.getStartValue() <= platform2.collider.getStartValue()) ? platform2.collider : platform1.collider;
             
             if(s1.isVertical != s2.isVertical || s1.length < 0.001 || s2.length < 0.001)
             {
@@ -51,20 +50,20 @@ public:
 	
 	static void mergeAll(std::vector<Platform>& platforms)
 	{
-	    for(int i=0; i<platforms.size(); i++)
+	    for(auto i=0u; i<platforms.size(); i++)
         {
-            for(int j=i+1; j<platforms.size(); j++)
+            for(auto j=i+1u; j<platforms.size(); j++)
             {
                 merge(platforms[i], platforms[j]);
             }
         }
         
-        platforms.erase(std::remove_if(platforms.begin(), platforms.end(), [](const Platform& platform){return platform.segment.length <= 0.001;}), platforms.end());
+        platforms.erase(std::remove_if(platforms.begin(), platforms.end(), [](const Platform& platform){return platform.collider.length <= 0.001;}), platforms.end());
 	}
 	
 	
 	Platform(const Vector2d& position, double length, bool isVertical)
-		: segment(position, length, isVertical)
+		: FixedSimpleSegmentCollider(SimpleSegment<double>(position, length, isVertical))
 	{
 		
 	}
@@ -73,8 +72,8 @@ public:
 	
 	void draw(sf::RenderTarget& rt) const
 	{
-		sf::RectangleShape shape(segment.getVector());
-		shape.setPosition(segment.position);
+		sf::RectangleShape shape(collider.getVector());
+		shape.setPosition(collider.position);
 		shape.setOutlineThickness(2);
 		shape.setOutlineColor(sf::Color::Red);
 		

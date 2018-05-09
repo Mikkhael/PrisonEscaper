@@ -118,10 +118,10 @@ enum AnimationState
 struct AnimatedSpritePreset
 {
 	std::string 	textureName;
+	sf::IntRect 	baseFrame;
 	double 			length;
 	unsigned int	framesCount;
 	unsigned int	framesPerRow;
-	sf::IntRect 	baseFrame;
 	
 	bool compare(const AnimatedSpritePreset& a) const
 	{

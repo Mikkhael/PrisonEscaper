@@ -148,9 +148,16 @@ public:
 
 class Actor : public Transformable
 {
+    
+    void updateCollider()
+    {
+        if(collider)
+        {
+            collider->updateCollider(getPosition(), getScale(), getRotation());
+        }
+    }
 public:
 	Collider* 	collider;
-	
 	
 	bool		isKinematic = false;
 	Vector2d 	velocity	= Vectors::null;
@@ -251,14 +258,17 @@ public:
 	virtual void setPosition (const Vector2d& 	position)
 	{
 		sprite.setPosition(position);
+		updateCollider()
 	}
 	virtual void setScale	 (const Vector2d&	scale)
 	{
 		sprite.setScale(scale);
+		updateCollider()
 	}
 	virtual void setRotation (double 			rotation)
 	{
 		sprite.setRotation(rotation);
+		updateCollider()
 	}
 	
 	virtual Vector2d getPosition() 	const
@@ -321,14 +331,17 @@ public:
 	virtual void setPosition (const Vector2d& 	position)
 	{
 		sprite.setPosition(position);
+		updateCollider()
 	}
 	virtual void setScale	 (const Vector2d&	scale)
 	{
 		sprite.setScale(scale);
+		updateCollider()
 	}
 	virtual void setRotation (double 			rotation)
 	{
 		sprite.setRotation(rotation);
+		updateCollider()
 	}
 	
 	virtual Vector2d getPosition() 	const

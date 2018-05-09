@@ -57,6 +57,7 @@ public:
 	{
 		setPosition(position);
 		isKinematic = true;
+		setCollider(Rect<double>(0,0,16,16));
 	}
 		
 };
