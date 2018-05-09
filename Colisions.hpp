@@ -435,7 +435,7 @@ class ShapeCollider : public Collider
 public:
     T collider;
     ShapeCollider(T c)
-        : collider(c), positionedCollider(c)
+        : positionedCollider(c), collider(c)
     {}
 
     virtual Collision::Result test(const Collider& c) const
