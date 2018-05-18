@@ -93,6 +93,8 @@ class Room
 	
 public:
 	
+	static bool autoOffsetWallTexture;
+	
 	void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default) const
 	{
 		wall.draw(target, states);
@@ -103,13 +105,19 @@ public:
 	{
 		wall.setPosition(rect_.position);
 		wall.setSize(rect_.size);
-		
+		if(autoOffsetWallTexture){
+            wall.setOffset(rect_.position);
+		}
 	}
 	Room(const Rect<double>& rect_, const WallType& wallType, std::vector<Platform>& platformsCollection)
 		: wall(wallType), collidableBounds(false)
 	{
 		wall.setPosition(rect_.position);
 		wall.setSize(rect_.size);
+		
+		if(autoOffsetWallTexture){
+            wall.setOffset(rect_.position);
+		}
 		
 		Rect<double> tempRect = wall.getRect();
         platformsCollection.emplace_back(tempRect.getUpperLeft(),  tempRect.size.x, false);
@@ -122,7 +130,7 @@ public:
 	
 };
 
-	
+bool Room::autoOffsetWallTexture = true;
 std::vector<Room> rooms;
 std::vector<Platform> platforms;
 
