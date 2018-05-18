@@ -35,7 +35,7 @@ public:
 		: position(left, top), size(width, height)
 	{}
 	
-	Rect(const Vector2<T>& pos, const Vector2<T> s)
+	Rect(const Vector2<T>& pos, const Vector2<T>& s)
 		: position(pos), size(s)
 	{}
 	

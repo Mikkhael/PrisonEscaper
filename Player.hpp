@@ -17,6 +17,8 @@ public:
 	
 	virtual void update(double deltaTime)
 	{
+	    
+	    
 		AnimatedSpriteActor::update(deltaTime);
 		
 		if(Controls::isPressed(Action::right))
@@ -35,10 +37,21 @@ public:
 		{
 			velocity += Vectors::up		 	* speed * deltaTime;
 		}
-		
-		std::cout<< velocity.x << "\t\t" << velocity.y <<std::endl;
 				
-		updateKinematics(deltaTime, drag);		
+		updateKinematics(deltaTime, drag);
+		
+		handleAllCollisions<Player, std::vector<Platform> >(*this, platforms.begin(), platforms.end(), [](Collision::Result& result, Player& player, Platform& platform)
+                      {
+                          if(!platform.isYellow)
+                          {
+                              Rect<double> rect = reinterpret_cast<ShapeCollider<Rect<double> >* >(player.collider)->getPositionedCollider();
+                              std::cout<<rect.getUpperLeft()<<" -- "<<rect.getUpperRight()<<std::endl<<rect.getBottomLeft()<<" -- "<<rect.getBottomRight()<<std::endl<<"with"<<std::endl<<platform.collider.position<<"  "<<platform.collider.length<<std::endl<<std::endl;
+                              
+                              
+                          }
+                            platform.isYellow = true;
+                      });
+		
 	}
 	
 	virtual void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default) const
@@ -58,6 +71,8 @@ public:
 		setPosition(position);
 		isKinematic = true;
 		setCollider(Rect<double>(0,0,16,16));
+	    Rect<double> rect = reinterpret_cast<ShapeCollider<Rect<double> >* >(this->collider)->getPositionedCollider();
+        std::cout<<rect.getUpperLeft()<<" -- "<<rect.getUpperRight()<<std::endl<<rect.getBottomLeft()<<" -- "<<rect.getBottomRight()<<std::endl<<std::endl;
 	}
 		
 };

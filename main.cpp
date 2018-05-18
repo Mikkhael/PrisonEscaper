@@ -15,26 +15,10 @@ int main()
 	Controls::setKeyMapping(sf::Keyboard::Space, 	Action::jump);
 	
 	
-	
-	
-	Collider* c1 = new RectCollider(Rect<double>(40, -100, 30, 200));
-	Collider* c2 = new CircleCollider( Circle<double>(Vector2<double>(0,10), 50.0));
-	
-	auto r = c2->test(*c1);
-	
-	std::cout << bool(r) << std::endl;
-	std::cout << r.xPenetration << std::endl;
-	std::cout << r.yPenetration << std::endl;
-	
-	
-	
 	WallActor wall(WallTypes::Bricks);
 	wall.setPosition(Vector2d(100, 20));
 	wall.setSize(Vector2i(200, 600));
 	
-	
-	std::vector<Room> rooms;
-	std::vector<Platform> platforms;
 	
 	rooms.emplace_back(Rect<double>(50, 15, 390, 155), WallTypes::Rocks,  platforms);
 	rooms.emplace_back(Rect<double>(25, 170, 200, 30), WallTypes::Bricks, platforms);
@@ -42,10 +26,13 @@ int main()
 	rooms.emplace_back(Rect<double>(440, 15, 50, 300), WallTypes::Bricks, platforms);
 	rooms.emplace_back(Rect<double>(100, 100, 40, 40), WallTypes::Bricks);
 	
+    Platform::mergeAll(platforms);
+    
+	
+	//platforms.push_back(Platform(Vector2d(100,100), 100, true));
 	
 	Player player(Vector2d(20, 50));
 		
-    Platform::mergeAll(platforms);
     
 		
 	sf::Clock clock;
@@ -66,18 +53,7 @@ int main()
                 window.close();
         }
 		
-		Controls::updateKeyStates();
-		
-		if(Controls::isPressed(Action::jump))
-		{
-			std::cout << "SPACE";
-			if(Controls::isTapped((Action::jump)))
-			{
-				std::cout << "  TAPPED";
-			}
-			std::cout << std::endl;
-		}
-		
+		Controls::updateKeyStates();		
 		
         player.update(deltaTime);
         

@@ -10,6 +10,7 @@
 
 class Platform : public FixedSimpleSegmentCollider
 {
+    
 public:
 	
 	static void merge(Platform& platform1, Platform& platform2)
@@ -27,7 +28,7 @@ public:
             if(overlap)
             {
                 //std::cout << s1.position.x << "  " <<s1.position.y << " : " <<s1.length << " --- " << s2.position.x << " "<<s2.position.y << " : " <<s2.length <<std::endl;
-                std::cout << s1.getStartValue() << "  " <<s1.getEndValue() << " : " <<s1.getOffset() << " --- " << s2.getStartValue() << " "<<s2.getEndValue() << " : " <<s2.getOffset() <<std::endl;
+                //std::cout << s1.getStartValue() << "  " <<s1.getEndValue() << " : " <<s1.getOffset() << " --- " << s2.getStartValue() << " "<<s2.getEndValue() << " : " <<s2.getOffset() <<std::endl;
                 if(s1.getEndValue() <= s2.getEndValue())
                 {
                     double tempEnd = s1.getEndValue();
@@ -42,8 +43,8 @@ public:
                     s2.setEndValue(tempEnd);
                 }             
                 //std::cout << s1.position.x << "  " <<s1.position.y << " : " <<s1.length << " --- " << s2.position.x << " "<<s2.position.y << " : " <<s2.length <<std::endl;
-                std::cout << s1.getStartValue() << "  " <<s1.getEndValue() << " : " <<s1.getOffset() << " --- " << s2.getStartValue() << " "<<s2.getEndValue() << " : " <<s2.getOffset() <<std::endl;
-                std::cout << "___________________________" <<std::endl;   
+                //std::cout << s1.getStartValue() << "  " <<s1.getEndValue() << " : " <<s1.getOffset() << " --- " << s2.getStartValue() << " "<<s2.getEndValue() << " : " <<s2.getOffset() <<std::endl;
+                //std::cout << "___________________________" <<std::endl;   
             }
                 
 	}
@@ -70,12 +71,13 @@ public:
 	
 	#ifdef DRAW_PLATFORMS
 	
+    bool isYellow = false;
 	void draw(sf::RenderTarget& rt) const
 	{
 		sf::RectangleShape shape(collider.getVector());
 		shape.setPosition(collider.position);
 		shape.setOutlineThickness(2);
-		shape.setOutlineColor(sf::Color::Red);
+		shape.setOutlineColor(isYellow ? sf::Color::Yellow : sf::Color::Red);
 		
 		rt.draw(shape);
 	}
@@ -120,5 +122,8 @@ public:
 	
 };
 
+	
+std::vector<Room> rooms;
+std::vector<Platform> platforms;
 
 #endif // ROOM_HPP_INCLUDED

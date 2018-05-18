@@ -290,5 +290,12 @@ public:
 	}
 };
 
+template<class T>
+std::ostream& operator<<(std::ostream& cout, const Vector2<T>& vector)
+{
+    cout<<vector.x<<" , "<<vector.y;
+    return cout; 
+}
+
 
 #endif // VECTORS_HPP_INCLUDED

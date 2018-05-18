@@ -143,7 +143,7 @@ namespace Collision
 		T lower  = value - std::min(range.x, range.y);
 		T higher = std::max(range.x, range.y) - value;
 		
-		return Result(lower >=0 && higher >= 0, lower<higher?-lower:higher, 0);
+		return Result(lower >=0 && higher >= 0, 0, 0, lower<higher?-lower:higher);
 	}
 	template <class T>
 	Result test(const Vector2<T>& range, const T value){return -test(value, range);}
@@ -158,7 +158,7 @@ namespace Collision
 		T toLower  = r1.y - r2.x;
 		T toHigher = r2.y - r1.x;
 		
-		return Result( toLower <=0 || toHigher <= 0, toLower<toHigher?toHigher:-toLower, 0);
+		return Result( toLower >=0 && toHigher >= 0, 0, 0, toLower<toHigher?-toLower:toHigher);
 	}
 	
 	// Point - SimpleSegment
@@ -182,7 +182,7 @@ namespace Collision
 		Result horizontal 	= test(point.x, rect.getHorizontal());
 		Result vertical 	= test(point.y, rect.getVertical());
 		
-		return Result(horizontal && vertical, horizontal.xPenetration, vertical.xPenetration);
+		return Result(horizontal && vertical, horizontal.distance, vertical.distance);
 	}
 	template <class T>
 	Result test( const Rect<T>& rect, const Vector2<T>& point){return -test(point, rect);}
@@ -198,6 +198,12 @@ namespace Collision
 		{
 			hResult = test(ssegment.position.x, rect.getHorizontal());
 			vResult = test(ssegment.getRange(), rect.getVertical());
+			
+			if(hResult)
+                std::cout<< "H";
+			if(vResult)
+                std::cout<< "V\t" << ssegment.getRange() << "\t" << rect.getVertical();
+            std::cout<<std::endl;
 		}
 		else
 		{
@@ -207,7 +213,7 @@ namespace Collision
 			
 		if(hResult && vResult)
 		{
-			return Result(true, hResult.xPenetration, vResult.xPenetration);
+			return Result(true, hResult.distance, vResult.distance);
 		}
 		return Result(false);
 	}
@@ -232,7 +238,7 @@ namespace Collision
                 Result r1 = test(ssegment1.getRange(), ssegment2.position.x);
                 Result r2 = test(ssegment1.position.y, ssegment2.getRange());
                 
-                return Result(r1 && r2, r1.xPenetration, r2.xPenetration);
+                return Result(r1 && r2, r1.distance, r2.distance);
             }
         }
 		else
@@ -240,12 +246,14 @@ namespace Collision
             Result rangeRes = test(ssegment1.getRange(), ssegment2.getRange());
             if(ssegment1.isVertical)
             {
-                rangeRes.yPenetration   = rangeRes.xPenetration;
+                rangeRes.yPenetration   = rangeRes.distance;
                 rangeRes.xPenetration   = 0;
                 rangeRes.distance       = ssegment2.position.x - ssegment1.position.x;
             }
             else
             {
+                rangeRes.yPenetration   = 0;
+                rangeRes.xPenetration   = rangeRes.distance;
                 rangeRes.distance       = ssegment2.position.y - ssegment1.position.y;
             }
             if(maxDistance >= 0){
@@ -262,7 +270,7 @@ namespace Collision
 		Result horizontal 	= test(rect1.getHorizontal(), 	rect2.getHorizontal());
 		Result vertical 	= test(rect2.getVertical(), 	rect2.getVertical());
 		
-		return Result(horizontal && vertical, horizontal.xPenetration, vertical.xPenetration);
+		return Result(horizontal && vertical, horizontal.distance, vertical.distance);
 	}
 	
 	// Point - Circle
@@ -285,6 +293,8 @@ namespace Collision
 	template <class T>
 	Result test(const SimpleSegment<T>& ssegment, const Circle<T>& circle)
 	{
+	    // TODO
+	    /*
 		if(ssegment.isVertical)
 		{
 			if(CollisionFast::test(circle.position.y, ssegment.getRange()))
@@ -303,6 +313,7 @@ namespace Collision
 		Result r2 = test(ssegment.getEnd(), circle);
 		
 		return Result::getWorse(r1, r2);
+		*/
 		
 	}
 	template <class T>
@@ -342,23 +353,23 @@ namespace Collision
 		{
 			if(hResult)
 			{
-				if(std::abs(vResult.xPenetration) < std::abs(hResult.xPenetration))
+				if(std::abs(vResult.distance) < std::abs(hResult.distance))
 				{
-					return Result(true, 0, vResult.xPenetration);
+					return Result(true, 0, vResult.distance);
 				}
 				else
 				{
-					return Result(true, hResult.xPenetration, 0);
+					return Result(true, hResult.distance, 0);
 				}
 			}
 			else
 			{
-				return Result(true, 0, vResult.xPenetration);
+				return Result(true, 0, vResult.distance);
 			}
 		}
 		else if(hResult)
 		{
-			return Result(true, hResult.xPenetration, 0);
+			return Result(true, hResult.distance, 0);
 		}
 		else
 		{
@@ -396,7 +407,6 @@ namespace Collision
 	template <class T>
 	Result test( const Circle<T>& circle, const Rect<T>& rect){return -test(rect, circle);}
 }
-
 static void _getPositionedCollider(const Rect<double>& collider, Rect<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, const double& rotation)
 {
 	positionedCollider = Rect<double>(position + collider.position, collider.size * scale);
@@ -412,9 +422,22 @@ static void _getPositionedCollider(const SimpleSegment<double>& collider, Simple
 	positionedCollider = SimpleSegment<double>(position + collider.position, scale.x * collider.length, collider.isVertical);
 }
 
-class Collider
+class Collider;
+
+class Collidable
 {
 public:
+    virtual const Collider& getCollider() const = 0;
+};
+
+class Collider : public Collidable
+{
+public:
+    virtual const Collider& getCollider() const
+    {
+        return *this;
+    }
+    
     virtual ~Collider(){};
     virtual Collision::Result test(const Collider&) const =0;
     virtual Collision::Result test(const Rect<double>&) const =0;
@@ -459,6 +482,11 @@ public:
         _getPositionedCollider(collider, positionedCollider, position, scale, rotation);
     }
     virtual ~ShapeCollider(){};
+    
+    T getPositionedCollider()
+    {
+        return positionedCollider;
+    }
 };
 
 template <class T>
@@ -502,5 +530,29 @@ typedef FixedShapeCollider<Rect<double> >           FixedRectCollider;
 typedef FixedShapeCollider<Circle<double> >         FixedCircleCollider;
 typedef FixedShapeCollider<SimpleSegment<double> >  FixedSimpleSegmentCollider;
 
+template<typename T1, typename T2>
+void handleCollision(T1& object1, T2& object2, void handler(Collision::Result&, T1&, T2&))
+{
+    Collision::Result result;
+    try
+    {
+        result = object1.getCollider().test(object2.getCollider());
+    }
+    catch(bool){
+        return;
+    }
+    if(result){
+        handler(result, object1, object2);
+    }
+}
+
+template<typename T1, typename T2>
+void handleAllCollisions(T1& object,  const typename T2::iterator& begin, const typename T2::iterator& end, void handler(Collision::Result&, T1&, typename T2::iterator::reference))
+{
+    for(auto it = begin; it < end; it++)
+    {
+        handleCollision(object, *it, handler);
+    }
+}
 
 #endif // COLISIONS_HPP_INCLUDED
