@@ -12,13 +12,7 @@ int main()
 	Controls::setKeyMapping(sf::Keyboard::W, 		Action::up);
 	Controls::setKeyMapping(sf::Keyboard::S, 		Action::down);
 	Controls::setKeyMapping(sf::Keyboard::D, 		Action::right);
-	Controls::setKeyMapping(sf::Keyboard::Space, 	Action::jump);
-	
-	
-	WallActor wall(WallTypes::Bricks);
-	wall.setPosition(Vector2d(100, 20));
-	wall.setSize(Vector2i(200, 600));
-	
+	Controls::setKeyMapping(sf::Keyboard::Space, 	Action::jump);	
 	
 	rooms.emplace_back(Rect<double>(50, 15, 390, 155), WallTypes::Rocks,  platforms);
 	rooms.emplace_back(Rect<double>(25, 170, 200, 30), WallTypes::Bricks, platforms);
@@ -40,13 +34,13 @@ int main()
     double currentTime = clock.getElapsedTime().asSeconds();
 	double lastTime    = currentTime;
 		
+    sf::Event event;
     while (window.isOpen())
     {
     	currentTime = clock.getElapsedTime().asSeconds();
     	deltaTime	= currentTime - lastTime;
     	lastTime	= currentTime;
     	
-        sf::Event event;
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)

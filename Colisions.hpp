@@ -198,12 +198,6 @@ namespace Collision
 		{
 			hResult = test(ssegment.position.x, rect.getHorizontal());
 			vResult = test(ssegment.getRange(), rect.getVertical());
-			
-			if(hResult)
-                std::cout<< "H";
-			if(vResult)
-                std::cout<< "V\t" << ssegment.getRange() << "\t" << rect.getVertical();
-            std::cout<<std::endl;
 		}
 		else
 		{
@@ -555,4 +549,31 @@ void handleAllCollisions(T1& object,  const typename T2::iterator& begin, const 
     }
 }
 
+
+
+
+template<typename T1, typename T2>
+void moveOutOfCollision(const Collision::Result& result, T1& object1, T2& object2)
+{
+    object1.move(result.getPenetrationVector());
+}
+
+template<typename T1>
+void moveOutOfWall(const Collision::Result& result, T1& object, SimpleSegment<double>& wall)
+{
+    if(wall.isVertical){
+        object.move(Vector2d(result.xPenetration, 0));
+        return;
+    }
+    object.move(Vector2d(0, result.yPenetration));
+}
+template<typename T1>
+void bounceOutOfWall(const Collision::Result& result, T1& object, SimpleSegment<double>& wall, double bounce = 1)
+{
+    if(wall.isVertical){
+        object.move(Vector2d(result.xPenetration, 0));
+        return;
+    }
+    object.move(Vector2d(0, result.yPenetration));
+}
 #endif // COLISIONS_HPP_INCLUDED

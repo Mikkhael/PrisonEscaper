@@ -12,9 +12,7 @@ class Player : public AnimatedSpriteActor
 	double drag = 1;
 	double speed = 100;
 	
-public:
-	
-	
+public:	
 	virtual void update(double deltaTime)
 	{
 	    
@@ -41,16 +39,9 @@ public:
 		updateKinematics(deltaTime, drag);
 		
 		handleAllCollisions<Player, std::vector<Platform> >(*this, platforms.begin(), platforms.end(), [](Collision::Result& result, Player& player, Platform& platform)
-                      {
-                          if(!platform.isYellow)
-                          {
-                              Rect<double> rect = reinterpret_cast<ShapeCollider<Rect<double> >* >(player.collider)->getPositionedCollider();
-                              std::cout<<rect.getUpperLeft()<<" -- "<<rect.getUpperRight()<<std::endl<<rect.getBottomLeft()<<" -- "<<rect.getBottomRight()<<std::endl<<"with"<<std::endl<<platform.collider.position<<"  "<<platform.collider.length<<std::endl<<std::endl;
-                              
-                              
-                          }
-                            platform.isYellow = true;
-                      });
+        {
+            moveOutOfWall(result, player, platform.collider);
+        });
 		
 	}
 	
@@ -71,9 +62,7 @@ public:
 		setPosition(position);
 		isKinematic = true;
 		setCollider(Rect<double>(0,0,16,16));
-	    Rect<double> rect = reinterpret_cast<ShapeCollider<Rect<double> >* >(this->collider)->getPositionedCollider();
-        std::cout<<rect.getUpperLeft()<<" -- "<<rect.getUpperRight()<<std::endl<<rect.getBottomLeft()<<" -- "<<rect.getBottomRight()<<std::endl<<std::endl;
-	}
+    }
 		
 };
 
