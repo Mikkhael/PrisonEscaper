@@ -169,6 +169,10 @@ public:
         return Vector2<_T>(x, y);
     }
     
+    bool isNull()
+    {
+    	return x == 0 && y == 0;
+    }
     
     
     void SHOW()

@@ -140,7 +140,8 @@ struct AnimatedSpritePreset
 namespace AnimatedSpritePresets
 {
 	const AnimatedSpritePreset	PlayerIdle		= AnimatedSpritePreset("assets/creatures/player.bmp", 	sf::IntRect(0,0,16,16), 	2, 		2);
-	const AnimatedSpritePreset	PlayerWalk		= AnimatedSpritePreset("assets/creatures/player.bmp", 	sf::IntRect(16,16,16,16), 	0.5, 	4);
+	const AnimatedSpritePreset	PlayerWalk		= AnimatedSpritePreset("assets/creatures/player.bmp", 	sf::IntRect(0,16,16,16), 	0.5, 	4);
+	const AnimatedSpritePreset	PlayerFall		= AnimatedSpritePreset("assets/creatures/player.bmp", 	sf::IntRect(16,16,16,16), 	-1,		1);
 }
 
 class AnimatedSprite : public sf::Sprite
@@ -159,17 +160,19 @@ class AnimatedSprite : public sf::Sprite
 	void updateTextureRect()
 	{
 		unsigned int yOffset = preset.framesPerRow != 0 ? frame/preset.framesPerRow : 0;
-		unsigned int xOffset = preset.framesPerRow != 0 ? frame%preset.framesPerRow : frame;
-		
+		unsigned int xOffset = preset.framesPerRow != 0 ? frame%preset.framesPerRow : frame;		
 				
-		frameRect = sf::IntRect( 	preset.baseFrame.left 	+ xOffset * preset.baseFrame.width,
-									preset.baseFrame.top 	+ yOffset * preset.baseFrame.height,
-									preset.baseFrame.width,
-									preset.baseFrame.height );
+		frameRect = sf::IntRect( 	preset.baseFrame.left 	+ xOffset * preset.baseFrame.width 	+ (flipX ? preset.baseFrame.width : 0),
+									preset.baseFrame.top 	+ yOffset * preset.baseFrame.height + (flipY ? preset.baseFrame.height: 0),
+									preset.baseFrame.width	* (flipX ? -1 : 1),
+									preset.baseFrame.height * (flipY ? -1 : 1));
 									
 		setTextureRect(frameRect);
 	}
 public:
+	
+	bool flipX = false;
+	bool flipY = false;
 	
 	AnimationState state;
 	
@@ -218,7 +221,7 @@ public:
 	
 	void updateFrame(double deltaTime)
 	{
-		if(state == Stop)
+		if(state == Stop || preset.length < 0)
 			return;
 		
 		frameCounter -= deltaTime;

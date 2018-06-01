@@ -14,33 +14,58 @@ class Player : public AnimatedSpriteActor
 	Vector2d gravity = Vector2d(0, 500);
 	double jumpForce = std::sqrt(500 * (16 * 3) * 2);
 	
-	bool inAir = true;
+public:
 	
-public:	
+	struct StateManager
+	{
+	private:
+	public:
+		bool isTurnedRight  = true;
+		bool isWalking 	    = false;
+		bool isInAir		= true;
+		
+		void manageState(Player& player)
+		{
+			if(isWalking)
+			{
+				player.sprite.setPreset(AnimatedSpritePresets::PlayerWalk);
+			}
+			else if(isInAir)
+			{
+				player.sprite.setPreset(AnimatedSpritePresets::PlayerFall);
+			}
+			else
+			{
+				player.sprite.setPreset(AnimatedSpritePresets::PlayerIdle);
+			}
+			
+			player.sprite.flipX = !isTurnedRight;
+		}
+				
+	}	stateManager;
+	
 	virtual void update(double deltaTime)
 	{
 	    Vector2d step;
 	    
 		AnimatedSpriteActor::update(deltaTime);
 		
+		stateManager.isWalking = false;
 		if(Controls::isPressed(Action::right))
 		{
-			step += Vectors::foreward	* speed * deltaTime;
+			step += Vectors::foreward;
+			stateManager.isWalking = true;
 		}
 		if(Controls::isPressed(Action::left))
 		{
-			step += Vectors::backward 	* speed * deltaTime;
-		}
-		if(Controls::isPressed(Action::up))
-		{
-			step += Vectors::down 		* speed * deltaTime;
-		}
-		if(Controls::isPressed(Action::down))
-		{
-			step += Vectors::up		 	* speed * deltaTime;
+			step += Vectors::backward;
+			stateManager.isWalking = true;
 		}
 		
-		if(inAir && Controls::isTapped(Action::jump))
+		stateManager.isTurnedRight = step.x > 0;
+		step *= speed * deltaTime;
+		
+		if(!stateManager.isInAir && Controls::isTapped(Action::jump))
 		{
 			velocity += Vectors::down * jumpForce;
 		}
@@ -48,7 +73,9 @@ public:
 		updateKinematics(deltaTime, drag, gravity, step);
 		Vector2d shift = moveOutOfWalls(platforms);
 		
-		inAir = shift.y < 0;
+		stateManager.isInAir = shift.y > 0;
+		
+		stateManager.manageState(*this);
 	}
 	
 	virtual void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default) const
