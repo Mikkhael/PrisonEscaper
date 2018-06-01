@@ -283,36 +283,6 @@ namespace Collision
 	template <class T>
 	Result test( const Circle<T>& circle, const Vector2<T>& point){return -test(point, circle);}
 	
-	// SimpleSegment - Circle
-	template <class T>
-	Result test(const SimpleSegment<T>& ssegment, const Circle<T>& circle)
-	{
-	    // TODO
-	    /*
-		if(ssegment.isVertical)
-		{
-			if(CollisionFast::test(circle.position.y, ssegment.getRange()))
-			{
-				return test(ssegment.position.x, circle.getRangeX());
-			}
-		}
-		else
-		{
-			if(CollisionFast::test(circle.position.x, ssegment.getRange()))
-			{
-				return test(ssegment.position.y, circle.getRangeY());
-			}
-		}
-		Result r1 = test(ssegment.position, circle);
-		Result r2 = test(ssegment.getEnd(), circle);
-		
-		return Result::getWorse(r1, r2);
-		*/
-		
-	}
-	template <class T>
-	Result test( const Circle<T>& circle, const SimpleSegment<T>& ssegment){return -test(ssegment, circle);}
-	
 	// Circle - Circle
 	template <class T>
 	Result test(const Circle<T>& circle1, const Circle<T>& circle2)
@@ -400,6 +370,17 @@ namespace Collision
 	}
 	template <class T>
 	Result test( const Circle<T>& circle, const Rect<T>& rect){return -test(rect, circle);}
+	
+	// SimpleSegment - Circle
+	template <class T>
+	Result test(const SimpleSegment<T>& ssegment, const Circle<T>& circle)
+	{
+	    // TODO ??
+	    return test<T>(ssegment.toRect(), circle);
+		
+	}
+	template <class T>
+	Result test( const Circle<T>& circle, const SimpleSegment<T>& ssegment){return -test(ssegment, circle);}
 }
 static void _getPositionedCollider(const Rect<double>& collider, Rect<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, const double& rotation)
 {
@@ -524,8 +505,8 @@ typedef FixedShapeCollider<Rect<double> >           FixedRectCollider;
 typedef FixedShapeCollider<Circle<double> >         FixedCircleCollider;
 typedef FixedShapeCollider<SimpleSegment<double> >  FixedSimpleSegmentCollider;
 
-template<typename T1, typename T2>
-void handleCollision(T1& object1, T2& object2, void handler(Collision::Result&, T1&, T2&))
+template<typename TObject1, typename TObject2, typename THandler>
+void handleCollision(TObject1& object1, TObject2& object2, THandler handler)
 {
     Collision::Result result;
     try
@@ -540,8 +521,8 @@ void handleCollision(T1& object1, T2& object2, void handler(Collision::Result&, 
     }
 }
 
-template<typename T1, typename T2>
-void handleAllCollisions(T1& object,  const typename T2::iterator& begin, const typename T2::iterator& end, void handler(Collision::Result&, T1&, typename T2::iterator::reference))
+template<typename TObject, typename TFwdIterator, typename THandler>
+void handleAllCollisions(TObject& object, TFwdIterator begin, TFwdIterator end, THandler handler)
 {
     for(auto it = begin; it < end; it++)
     {
@@ -553,19 +534,27 @@ void handleAllCollisions(T1& object,  const typename T2::iterator& begin, const 
 
 
 template<typename T1, typename T2>
-void moveOutOfCollision(const Collision::Result& result, T1& object1, T2& object2)
+Vector2d moveOutOfCollision(const Collision::Result& result, T1& object1, T2& object2)
 {
-    object1.move(result.getPenetrationVector());
+	Vector2d shift = result.getPenetrationVector();
+    object1.move(shift);
+    return shift;
 }
 
 template<typename T1>
-void moveOutOfWall(const Collision::Result& result, T1& object, SimpleSegment<double>& wall)
+Vector2d moveOutOfWall(const Collision::Result& result, T1& object, SimpleSegment<double>& wall)
 {
-    if(wall.isVertical){
-        object.move(Vector2d(result.xPenetration, 0));
-        return;
+	Vector2d shift;
+    if(wall.isVertical)
+	{
+		shift = Vector2d(result.xPenetration, 0);
     }
-    object.move(Vector2d(0, result.yPenetration));
+    else
+	{
+		shift = Vector2d(0, result.yPenetration);
+	}
+    object.move(shift);
+	return shift;
 }
 template<typename T1>
 void bounceOutOfWall(const Collision::Result& result, T1& object, SimpleSegment<double>& wall, double bounce = 1)

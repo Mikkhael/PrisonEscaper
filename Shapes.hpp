@@ -163,6 +163,13 @@ public:
         else
             position.y = val;
 	}
+	
+	Rect<T> toRect() const
+	{
+		if(isVertical)
+			return Rect<T>(position, {0, length});
+		return Rect<T>(position, {length, 0});
+	}
 };
 
 #endif // SHAPES_HPP_INCLUDED

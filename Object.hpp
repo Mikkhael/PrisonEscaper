@@ -6,6 +6,7 @@
 #include "Animations.hpp"
 #include "Colisions.hpp"
 #include "Shapes.hpp"
+#include "PLatform.hpp"
 
 class Actor : public Transformable, public Collidable
 {
@@ -30,8 +31,9 @@ public:
 	bool		isKinematic = false;
 	Vector2d 	velocity	= Vectors::null;
 	
-	void updateKinematics(double deltaTime, double drag = 0, Vector2d step = Vectors::null)
+	void updateKinematics(double deltaTime, double drag = 0, const Vector2d& gravity = Vectors::null, const Vector2d& step = Vectors::null)
 	{
+		velocity += gravity * deltaTime;
 		move(velocity * deltaTime + step);
 		velocity *= (1-drag*deltaTime);
 	}
@@ -81,6 +83,29 @@ public:
         }
         collider = new ShapeCollider<T>(shape);
     }
+    
+    Vector2d moveOutOfWalls(std::vector<Platform>& platforms)
+    {
+    	Vector2d shift;
+    	handleAllCollisions(*this, platforms.begin(), platforms.end(), [&shift](Collision::Result& result, Actor& actor, Platform& platform)
+        {
+            if(platform.collider.isVertical)
+			{
+				if(std::abs(result.yPenetration) <= 0.5)
+					return;
+				actor.velocity.x = 0;
+			}
+			else
+			{
+				if(std::abs(result.xPenetration) <= 0.5)
+					return;
+				actor.velocity.y = 0;
+			}
+            shift += moveOutOfWall(result, actor, platform.collider);
+        });
+        return shift;
+    }
+    
     
     
     

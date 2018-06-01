@@ -11,38 +11,44 @@ class Player : public AnimatedSpriteActor
 	
 	double drag = 1;
 	double speed = 100;
+	Vector2d gravity = Vector2d(0, 500);
+	double jumpForce = std::sqrt(500 * (16 * 3) * 2);
+	
+	bool inAir = true;
 	
 public:	
 	virtual void update(double deltaTime)
 	{
-	    
+	    Vector2d step;
 	    
 		AnimatedSpriteActor::update(deltaTime);
 		
 		if(Controls::isPressed(Action::right))
 		{
-			velocity += Vectors::foreward	* speed * deltaTime;
+			step += Vectors::foreward	* speed * deltaTime;
 		}
 		if(Controls::isPressed(Action::left))
 		{
-			velocity += Vectors::backward 	* speed * deltaTime;
+			step += Vectors::backward 	* speed * deltaTime;
 		}
 		if(Controls::isPressed(Action::up))
 		{
-			velocity += Vectors::down 		* speed * deltaTime;
+			step += Vectors::down 		* speed * deltaTime;
 		}
 		if(Controls::isPressed(Action::down))
 		{
-			velocity += Vectors::up		 	* speed * deltaTime;
+			step += Vectors::up		 	* speed * deltaTime;
+		}
+		
+		if(inAir && Controls::isTapped(Action::jump))
+		{
+			velocity += Vectors::down * jumpForce;
 		}
 				
-		updateKinematics(deltaTime, drag);
+		updateKinematics(deltaTime, drag, gravity, step);
+		Vector2d shift = moveOutOfWalls(platforms);
 		
-		handleAllCollisions<Player, std::vector<Platform> >(*this, platforms.begin(), platforms.end(), [](Collision::Result& result, Player& player, Platform& platform)
-        {
-            moveOutOfWall(result, player, platform.collider);
-        });
-		
+		inAir = shift.y < 0;
 	}
 	
 	virtual void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default) const

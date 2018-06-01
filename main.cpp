@@ -25,7 +25,7 @@ int main()
 	
 	//platforms.push_back(Platform(Vector2d(100,100), 100, true));
 	
-	Player player(Vector2d(20, 50));
+	Player player(Vector2d(70, 50));
 		
     
 		
@@ -33,7 +33,10 @@ int main()
     double deltaTime   = 0;
     double currentTime = clock.getElapsedTime().asSeconds();
 	double lastTime    = currentTime;
-		
+	double subDeltaTime = 0;
+	
+	double maxSubsteppingDeltaTime = 0.036;
+	
     sf::Event event;
     while (window.isOpen())
     {
@@ -47,9 +50,17 @@ int main()
                 window.close();
         }
 		
-		Controls::updateKeyStates();		
+		Controls::updateKeyStates();
 		
-        player.update(deltaTime);
+		// Update
+		while(deltaTime > 0)
+		{
+			subDeltaTime = deltaTime > maxSubsteppingDeltaTime ? maxSubsteppingDeltaTime : deltaTime;
+			
+			player.update(subDeltaTime);
+			
+			deltaTime -= maxSubsteppingDeltaTime;
+		}
         
         
         window.clear();

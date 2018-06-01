@@ -50,14 +50,15 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 			<Add option="-DSFML_STATIC" />
-			<Add directory="C:/Program files (x86)/CodeBlocks/SFML/SFML-2.4.2/include" />
+			<Add directory="D:/Program files (x86)/CodeBlocks/SFML/SFML-2.4.2/include" />
 		</Compiler>
 		<Linker>
-			<Add directory="C:/Program files (x86)/CodeBlocks/SFML/SFML-2.4.2/lib" />
+			<Add directory="D:/Program files (x86)/CodeBlocks/SFML/SFML-2.4.2/lib" />
 		</Linker>
 		<Unit filename="Animations.hpp" />
 		<Unit filename="Colisions.hpp" />
 		<Unit filename="Object.hpp" />
+		<Unit filename="PLatform.hpp" />
 		<Unit filename="Player.hpp" />
 		<Unit filename="Room.hpp" />
 		<Unit filename="Shapes.hpp" />
