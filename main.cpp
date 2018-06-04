@@ -8,11 +8,12 @@ int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Prison Escaper");
 	
-	Controls::setKeyMapping(sf::Keyboard::A, 		Action::left);
-	Controls::setKeyMapping(sf::Keyboard::W, 		Action::up);
-	Controls::setKeyMapping(sf::Keyboard::S, 		Action::down);
-	Controls::setKeyMapping(sf::Keyboard::D, 		Action::right);
-	Controls::setKeyMapping(sf::Keyboard::Space, 	Action::jump);	
+	Controls::addKeyMapping(Action::left, 	sf::Keyboard::A);
+	Controls::addKeyMapping(Action::up, 	sf::Keyboard::W);
+	Controls::addKeyMapping(Action::down, 	sf::Keyboard::S);
+	Controls::addKeyMapping(Action::right, 	sf::Keyboard::D);
+	Controls::addKeyMapping(Action::jump, 	sf::Keyboard::Space);
+	Controls::addKeyMapping(Action::jump, 	sf::Mouse::Left);
 	
 	rooms.emplace_back(Rect<double>(50, 15, 390, 155), WallTypes::Rocks,  platforms);
 	rooms.emplace_back(Rect<double>(25, 170, 200, 30), WallTypes::Bricks, platforms);
