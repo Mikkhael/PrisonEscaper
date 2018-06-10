@@ -11,7 +11,8 @@ enum Action
 	right,
 	up,
 	down,
-	jump
+	jump,
+	shoot,
 };
 
 class Controls
@@ -68,6 +69,7 @@ class Controls
 	static std::map<Action, std::vector<InputButton*> > inputMap;
 	static std::map<Action, KeyState>					actionStates;
 	
+	static sf::RenderWindow* bindedWindow;
 	
 public:
 	
@@ -143,6 +145,10 @@ public:
 	}
 	
 	
+	static void bindWindow(sf::RenderWindow& rw)
+	{
+		bindedWindow = &rw;
+	}
 	
 	static Vector2f getMouseScreen()
 	{
@@ -152,16 +158,29 @@ public:
 	{
 		return sf::Mouse::getPosition(rw);
 	}
+	static Vector2f getMouseWindow()
+	{
+		if(!bindedWindow)
+			return Vector2f(0,0);
+		return sf::Mouse::getPosition(*bindedWindow);
+	}
 	static Vector2f getMouseView(const sf::RenderWindow& rw)
 	{
-		return rw.getView().getInverseTransform().transformPoint(sf::Vector2f(sf::Mouse::getPosition(rw)));
+		return rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
 	}
-	
+	static Vector2f getMouseView()
+	{
+		if(!bindedWindow)
+			return Vector2f(0,0);
+		return bindedWindow->mapPixelToCoords(sf::Mouse::getPosition(*bindedWindow));
+	}
 	
 	
 };
 
 std::map<Action, std::vector<Controls::InputButton*> > 		Controls::inputMap;
 std::map<Action, Controls::KeyState>						Controls::actionStates;
+
+sf::RenderWindow* Controls::bindedWindow;
 
 #endif // KEYBOARD_HPP_INCLUDED

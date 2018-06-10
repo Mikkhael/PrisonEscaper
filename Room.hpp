@@ -25,10 +25,13 @@ public:
 	Room(const Rect<double>& rect_, const WallType& wallType)
 		: wall(wallType), collidableBounds(false)
 	{
+		
+		std::cout << "New Room" << std::endl;
 		wall.setPosition(rect_.position);
 		wall.setSize(rect_.size);
 		if(autoOffsetWallTexture){
             wall.setOffset(rect_.position);
+		std::cout << "End New Room" << std::endl;
 		}
 	}
 	Room(const Rect<double>& rect_, const WallType& wallType, std::vector<Platform>& platformsCollection)
@@ -49,6 +52,7 @@ public:
 		
 	}
 	
+	virtual ~Room(){}
 	
 };
 

@@ -38,6 +38,8 @@ public:
 	WallActor(const WallType& wallType)
 		: SpriteActor(textureManager.get(wallType.textureName, true), wallType.defaultRect)
 	{}
+	
+	virtual ~WallActor(){}
 };
 
 #endif // WALLACTOR_HPP_INCLUDED

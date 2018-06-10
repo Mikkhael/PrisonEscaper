@@ -65,6 +65,8 @@ public:
 		
 	}
 	
+	virtual ~Platform(){}
+	
 	#ifdef DRAW_PLATFORMS
 	
     bool isYellow = false;

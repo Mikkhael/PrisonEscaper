@@ -8,6 +8,9 @@
 #include "Shapes.hpp"
 #include "PLatform.hpp"
 
+Vector2d globalGravity 	= Vectors::up;
+double 	 globalDrag		= 1;
+
 class Actor : public Transformable, public Collidable
 {
 protected:
@@ -29,11 +32,12 @@ public:
 	}
 	
 	bool		isKinematic = false;
+	double 		mass		= 0;
 	Vector2d 	velocity	= Vectors::null;
 	
-	void updateKinematics(double deltaTime, double drag = 0, const Vector2d& gravity = Vectors::null, const Vector2d& step = Vectors::null)
+	void updateKinematics(double deltaTime, const Vector2d& step = Vectors::null, double drag = globalDrag, const Vector2d& gravity = globalGravity)
 	{
-		velocity += gravity * deltaTime;
+		velocity += gravity * mass * deltaTime;
 		move(velocity * deltaTime + step);
 		velocity *= (1-drag*deltaTime);
 	}
@@ -113,6 +117,17 @@ public:
 	Actor()
 		: collider(nullptr)
 	{}
+	
+	Actor(const Actor& actor)
+	{
+		std::cout << "COPY" << std::endl;
+			
+		isKinematic = actor.isKinematic;
+		mass		= actor.mass;
+		velocity	= actor.velocity;
+		collider	= actor.collider;
+	}
+	
 	
 	virtual ~Actor()
 	{

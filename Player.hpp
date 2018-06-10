@@ -4,15 +4,14 @@
 #include "Object.hpp"
 #include "Keyboard.hpp"
 #include "Room.hpp"
+#include "Cannon.hpp"
 
 
 class Player : public AnimatedSpriteActor
 {
-	
-	double drag = 1;
 	double speed = 100;
-	Vector2d gravity = Vector2d(0, 500);
-	double jumpForce = std::sqrt(500 * (16 * 3) * 2);
+	double shootForce = 500;
+	double jumpForce;
 	
 public:
 	
@@ -55,22 +54,30 @@ public:
 		{
 			step += Vectors::foreward;
 			stateManager.isWalking = true;
+			stateManager.isTurnedRight = true;
 		}
 		if(Controls::isPressed(Action::left))
 		{
 			step += Vectors::backward;
 			stateManager.isWalking = true;
+			stateManager.isTurnedRight = false;
 		}
 		
-		stateManager.isTurnedRight = step.x > 0;
 		step *= speed * deltaTime;
 		
 		if(!stateManager.isInAir && Controls::isTapped(Action::jump))
 		{
 			velocity += Vectors::down * jumpForce;
 		}
+		
+		if(Controls::isTapped(Action::shoot))
+		{
+			Vector2d vel = (Controls::getMouseView() - getPosition()).resize(shootForce);
+			Cannonball::spawn(getPosition(), vel);
+		}
+		
 				
-		updateKinematics(deltaTime, drag, gravity, step);
+		updateKinematics(deltaTime, step);
 		Vector2d shift = moveOutOfWalls(platforms);
 		
 		stateManager.isInAir = shift.y > 0;
@@ -95,7 +102,11 @@ public:
 		setPosition(position);
 		isKinematic = true;
 		setCollider(Rect<double>(0,0,16,16));
+		mass = 500;
+		jumpForce = std::sqrt(mass * (16 * 3) * 2);
     }
+    
+    virtual ~Player(){}
 		
 };
 

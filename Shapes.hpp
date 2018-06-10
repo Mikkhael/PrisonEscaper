@@ -167,8 +167,8 @@ public:
 	Rect<T> toRect() const
 	{
 		if(isVertical)
-			return Rect<T>(position, {0, length});
-		return Rect<T>(position, {length, 0});
+			return Rect<T>(position, {1, length});
+		return Rect<T>(position, {length, 1});
 	}
 };
 

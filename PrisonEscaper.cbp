@@ -56,7 +56,9 @@
 			<Add directory="D:/Program files (x86)/CodeBlocks/SFML/SFML-2.4.2/lib" />
 		</Linker>
 		<Unit filename="Animations.hpp" />
+		<Unit filename="Cannon.hpp" />
 		<Unit filename="Colisions.hpp" />
+		<Unit filename="Keyboard.hpp" />
 		<Unit filename="Object.hpp" />
 		<Unit filename="PLatform.hpp" />
 		<Unit filename="Player.hpp" />
