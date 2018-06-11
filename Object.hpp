@@ -86,6 +86,15 @@ public:
         collider = new ShapeCollider<T>(shape);
     }
     
+    void removeCollider()
+    {
+        if(collider)
+        {
+            delete collider;
+			collider = nullptr;
+        }
+    }
+    
     Vector2d moveOutOfWalls(std::vector<Platform>& platforms)
     {
     	Vector2d shift;
@@ -133,21 +142,22 @@ public:
 	}
 	
 	Actor(const Actor& a) 
-		: 	collider(a.collider->clonePtr()),
+		: 	collider(nullptr),
 			isKinematic(a.isKinematic),
 			mass(a.mass),
 			velocity(a.velocity)
 			
 	{
+		if(a.collider)
+		{
+			collider = a.collider->clonePtr();
+		}
 		std::cout << "Copy" << std::endl;
 	}
 	
 	virtual ~Actor()
 	{
-		if(collider)
-		{
-			delete collider;
-		}
+		removeCollider();
 		std::cout << "Dest" << std::endl;
 	}
 	

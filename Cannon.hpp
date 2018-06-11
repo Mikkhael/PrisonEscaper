@@ -19,6 +19,7 @@ public:
 	
 	static void spawn(const Vector2d& position_, const Vector2d& velocity_)
 	{
+		std::cout << "Spawning cannonball..." << std::endl;
 		cannonballs.emplace_back(position_, velocity_);
 	}
 	

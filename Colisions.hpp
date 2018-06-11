@@ -448,7 +448,8 @@ public:
     
     virtual Collider* clonePtr() const
     {
-		return new ShapeCollider(collider);
+    	Collider* res = new ShapeCollider<T>(collider);
+    	return res;
     }
 
     virtual Collision::Result test(const Collider& c) const
@@ -491,7 +492,8 @@ public:
     
     virtual Collider* clonePtr() const
     {
-		return new FixedShapeCollider(collider);
+    	Collider* res = new FixedShapeCollider<T>(collider);
+    	return res;
     }
 
     virtual Collision::Result test(const Collider& c) const
