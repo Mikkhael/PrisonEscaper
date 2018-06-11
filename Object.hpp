@@ -50,7 +50,6 @@ public:
 		return;
 	}
 	
-	
 	Collision::Result testCollision(const Collider& collider_) const
 	{
 		if(collider)
@@ -116,10 +115,6 @@ public:
         });
         return shift;
     }
-    
-    
-    
-    
 	
 	Actor()
 		: 	collider(nullptr),

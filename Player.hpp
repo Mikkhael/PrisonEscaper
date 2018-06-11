@@ -89,14 +89,8 @@ public:
 	{
 		AnimatedSpriteActor::draw(target, states);
 	}
-
 	
-	
-	
-	
-	
-	
-	Player(Vector2d position)
+	Player(const Vector2d& position)
 		: AnimatedSpriteActor(AnimatedSpritePresets::PlayerIdle)
 	{
 		setPosition(position);
