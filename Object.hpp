@@ -29,9 +29,9 @@ public:
         return collider;
 	}
 	
-	bool		isKinematic = false;
-	double 		mass		= 0;
-	Vector2d 	velocity	= Vectors::null;
+	bool		isKinematic;
+	double 		mass;
+	Vector2d 	velocity;
 	
 	void updateKinematics(double deltaTime, const Vector2d& step = Vectors::null, double drag = globalDrag, const Vector2d& gravity = globalGravity)
 	{
@@ -113,9 +113,34 @@ public:
     
 	
 	Actor()
-		: collider(nullptr)
-	{}	
+		: 	collider(nullptr),
+			isKinematic(false),
+			mass(0),
+			velocity(Vectors::null)
+	{
+		std::cout << "Cnst" << std::endl;
+	}	
 	
+	Actor(Actor&& a) noexcept
+		: 	collider(a.collider),
+			isKinematic(a.isKinematic),
+			mass(a.mass),
+			velocity(a.velocity)
+			
+	{
+		a.collider = nullptr;
+		std::cout << "Move" << std::endl;
+	}
+	
+	Actor(const Actor& a) 
+		: 	collider(a.collider->clonePtr()),
+			isKinematic(a.isKinematic),
+			mass(a.mass),
+			velocity(a.velocity)
+			
+	{
+		std::cout << "Copy" << std::endl;
+	}
 	
 	virtual ~Actor()
 	{

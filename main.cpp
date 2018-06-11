@@ -20,11 +20,15 @@ int main()
 	
 	Controls::bindWindow(window);
 	
+	std::cout << "make rooms...";
+	
 	rooms.emplace_back(Rect<double>(50, 15, 390, 155), WallTypes::Rocks,  platforms);
 	rooms.emplace_back(Rect<double>(25, 170, 200, 30), WallTypes::Bricks, platforms);
 	rooms.emplace_back(Rect<double>(40, 200, 400, 20), WallTypes::Bricks, platforms);
 	rooms.emplace_back(Rect<double>(440, 15, 50, 300), WallTypes::Bricks, platforms);
 	rooms.emplace_back(Rect<double>(100, 100, 40, 40), WallTypes::Bricks);
+	
+	std::cout << "done\n";
 	
     Platform::mergeAll(platforms);
     

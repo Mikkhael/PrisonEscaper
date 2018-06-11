@@ -43,10 +43,12 @@ public:
 		}
 		
 		Rect<double> tempRect = wall.getRect();
+		std::cout << "emplace.";
         platformsCollection.emplace_back(tempRect.getUpperLeft(),  tempRect.size.x, false);
         platformsCollection.emplace_back(tempRect.getBottomLeft(), tempRect.size.x, false);
         platformsCollection.emplace_back(tempRect.getUpperLeft(),  tempRect.size.y, true);
         platformsCollection.emplace_back(tempRect.getUpperRight(), tempRect.size.y, true);
+		std::cout << "..";
 		
 	}
 	
