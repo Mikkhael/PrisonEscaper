@@ -6,19 +6,15 @@
 
 class Cannonball : public SpriteActor
 {
-	
+	static std::vector<Cannonball> cannonballs;
 public:
 	
-	static std::vector<Cannonball> cannonballs;
 	
 	
 	void update(double deltaTime)
 	{
-		std::cout << "A";
 		updateKinematics(deltaTime);
-		std::cout << "B";
 		moveOutOfWalls(platforms);
-		std::cout << "C\n";
 	}
 	
 	static void spawn(const Vector2d& position_, const Vector2d& velocity_)

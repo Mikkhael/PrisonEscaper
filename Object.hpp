@@ -24,11 +24,9 @@ protected:
 public:
 	Collider* 	collider;
 	
-	virtual const Collider& getCollider() const
+	virtual const Collider* getCollider() const
 	{
-	    if(!collider)
-            throw false;
-        return *collider;
+        return collider;
 	}
 	
 	bool		isKinematic = false;
@@ -116,17 +114,7 @@ public:
 	
 	Actor()
 		: collider(nullptr)
-	{}
-	
-	Actor(const Actor& actor)
-	{
-		std::cout << "COPY" << std::endl;
-			
-		isKinematic = actor.isKinematic;
-		mass		= actor.mass;
-		velocity	= actor.velocity;
-		collider	= actor.collider;
-	}
+	{}	
 	
 	
 	virtual ~Actor()
@@ -135,6 +123,7 @@ public:
 		{
 			delete collider;
 		}
+		std::cout << "Dest" << std::endl;
 	}
 	
 };

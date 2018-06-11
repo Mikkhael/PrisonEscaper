@@ -402,18 +402,19 @@ class Collider;
 class Collidable
 {
 public:
-    virtual const Collider& getCollider() const = 0;
+    virtual const Collider* getCollider() const = 0;
 };
 
 class Collider : public Collidable
 {
 public:
-    virtual const Collider& getCollider() const
+    virtual const Collider* getCollider() const
     {
-        return *this;
+        return this;
     }
     
     virtual ~Collider(){};
+    virtual Collider* clonePtr() const = 0;
     virtual Collision::Result test(const Collider&) const =0;
     virtual Collision::Result test(const Rect<double>&) const =0;
     virtual Collision::Result test(const Circle<double>&) const =0;
@@ -423,6 +424,15 @@ public:
     {
         updateCollider(transform.getPosition(), transform.getScale(), transform.getRotation());
     }
+    virtual Collision::Result test(const Collider* c) const 
+    {
+    	if(c)
+		{
+			return test(*c);
+		}
+		return Collision::Result(false);
+    }
+    
 };
 
 template <class T>
@@ -435,6 +445,11 @@ public:
     ShapeCollider(T c)
         : positionedCollider(c), collider(c)
     {}
+    
+    virtual Collider* clonePtr() const
+    {
+		return new ShapeCollider(collider);
+    }
 
     virtual Collision::Result test(const Collider& c) const
     {
@@ -473,6 +488,11 @@ public:
     FixedShapeCollider(T c)
         : collider(c)
     {}
+    
+    virtual Collider* clonePtr() const
+    {
+		return new FixedShapeCollider(collider);
+    }
 
     virtual Collision::Result test(const Collider& c) const
     {
@@ -509,15 +529,10 @@ template<typename TObject1, typename TObject2, typename THandler>
 void handleCollision(TObject1& object1, TObject2& object2, THandler handler)
 {
     Collision::Result result;
-    try
+	result = object1.getCollider()->test(object2.getCollider());
+    if(result)
     {
-        result = object1.getCollider().test(object2.getCollider());
-    }
-    catch(bool){
-        return;
-    }
-    if(result){
-        handler(result, object1, object2);
+		handler(result, object1, object2);
     }
 }
 
