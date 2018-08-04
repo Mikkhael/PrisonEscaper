@@ -1,48 +1,63 @@
 #ifndef ROOM_HPP_INCLUDED
 #define ROOM_HPP_INCLUDED
 
-#include "WallActor.hpp"
 #include "Colisions.hpp"
 #include "PLatform.hpp"
 #include <vector>
+#include "Object.hpp"
 
-
-
-class Room
+struct WallType
 {
-	WallActor 	wall;
-	bool 		collidableBounds;
+	std::string textureName;
+	sf::IntRect defaultRect;
 	
+	WallType(const std::string& textureName_, const sf::IntRect& defaultRect_)
+		: textureName(textureName_), defaultRect(defaultRect_)
+	{}
+	
+};
+
+namespace WallTypes
+{
+	const WallType Bricks	("assets/walls/brick.bmp", 		sf::IntRect(0, 0, 8, 8));
+	const WallType Rocks	("assets/walls/rocks.bmp", 		sf::IntRect(0, 0, 8, 8));
+}
+
+
+class Room : public SpriteActor
+{
+	bool 		collidableBounds;
+		
 public:
 	
 	static bool autoOffsetWallTexture;
 	
-	void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default) const
+	Rect<double> getRect() const
 	{
-		wall.draw(target, states);
+		return Rect<double>(getPosition(), getSize());
 	}
 	
 	Room(const Rect<double>& rect_, const WallType& wallType)
-		: wall(wallType), collidableBounds(false)
+		: SpriteActor(textureManager.get(wallType.textureName, true), wallType.defaultRect), collidableBounds(false)
 	{
 		
-		wall.setPosition(rect_.position);
-		wall.setSize(rect_.size);
+		setPosition(rect_.position);
+		setSize(rect_.size);
 		if(autoOffsetWallTexture){
-            wall.setOffset(rect_.position);
+            setOffset(rect_.position);
 		}
 	}
 	Room(const Rect<double>& rect_, const WallType& wallType, std::vector<Platform>& platformsCollection)
-		: wall(wallType), collidableBounds(false)
+		: SpriteActor(textureManager.get(wallType.textureName, true), wallType.defaultRect), collidableBounds(false)
 	{
-		wall.setPosition(rect_.position);
-		wall.setSize(rect_.size);
+		setPosition(rect_.position);
+		setSize(rect_.size);
 		
 		if(autoOffsetWallTexture){
-            wall.setOffset(rect_.position);
+            setOffset(rect_.position);
 		}
 		
-		Rect<double> tempRect = wall.getRect();
+		Rect<double> tempRect = getRect();
         platformsCollection.emplace_back(tempRect.getUpperLeft(),  tempRect.size.x, false);
         platformsCollection.emplace_back(tempRect.getBottomLeft(), tempRect.size.x, false);
         platformsCollection.emplace_back(tempRect.getUpperLeft(),  tempRect.size.y, true);
