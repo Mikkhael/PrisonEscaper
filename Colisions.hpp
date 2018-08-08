@@ -5,6 +5,18 @@
 
 using eType = double;
 
+/*
+            Pnt     SSeg    Rect    Circ
+    Pnt              C      FC      FC
+    SSeg     C       C       C       C
+    Rect    FC       C      FC      FC
+    Circ    FC       C      FC      FC
+
+
+
+*/
+
+
 namespace CollisionFast
 {
 	
@@ -99,7 +111,7 @@ namespace Collision
 		
 		Result operator -()
 		{
-			return Result(value, -xPenetration, -yPenetration);
+			return Result(value, -xPenetration, -yPenetration, distance);
 		}
 		
 		Vector2<double> getPenetrationVector() const
@@ -114,7 +126,7 @@ namespace Collision
 			: xPenetration(x), yPenetration(y), distance(dist), value(x != 0 || y != 0)
 		{}
 		
-		static Result& getBetter(Result& r1, Result& r2)
+		static const Result& getBetter(const Result& r1, const Result& r2)
 		{
 			if(!r1)
 				return r2;
@@ -124,7 +136,7 @@ namespace Collision
 				return r1;
 			return r2;
 		}
-		static Result& getWorse(Result& r1, Result& r2)
+		static const Result& getWorse(const Result& r1, const Result& r2)
 		{
 			if(!r1)
 				return r2;
@@ -158,18 +170,25 @@ namespace Collision
 		T toLower  = r1.y - r2.x;
 		T toHigher = r2.y - r1.x;
 		
-		return Result( toLower >=0 && toHigher >= 0, 0, 0, toLower<toHigher?-toLower:toHigher);
+		return Result( toLower >=0 && toHigher >= 0, 0, 0, (toLower<toHigher)?(-toLower):(toHigher));
 	}
 	
 	// Point - SimpleSegment
 	template <class T>
 	Result test(const Vector2<T>& point, const SimpleSegment<T>& ssegment)
 	{
+	    Result r;
 		if(ssegment.isVertical)
 		{
-			return test(point.y, ssegment.getRange());
+			r = test(point.y, ssegment.getRange());
+			r.distance = std::abs(point.x - ssegment.position.x);
 		}
-		return test(point.x, ssegment.getRange());
+		else
+        {            
+			r = test(point.x, ssegment.getRange());
+			r.distance = std::abs(point.y - ssegment.position.y);
+        }
+		return r;
 	}
 	template <class T>
 	Result test( const SimpleSegment<T>& ssegment, const Vector2<T>& point){return -test(point, ssegment);}
@@ -198,18 +217,11 @@ namespace Collision
 		{
 			hResult = test(ssegment.position.x, rect.getHorizontal());
 			vResult = test(ssegment.getRange(), rect.getVertical());
+			return Result(hResult && vResult, hResult.distance, 0, vResult.distance);
 		}
-		else
-		{
-			hResult = test(ssegment.getRange(), rect.getHorizontal());
-			vResult = test(ssegment.position.y, rect.getVertical());
-		}
-			
-		if(hResult && vResult)
-		{
-			return Result(true, hResult.distance, vResult.distance);
-		}
-		return Result(false);
+        hResult = test(ssegment.getRange(), rect.getHorizontal());
+        vResult = test(ssegment.position.y, rect.getVertical());
+        return Result(hResult && vResult, 0, vResult.distance, hResult.distance);
 	}
 	template <class T>
 	Result test( const Rect<T>& rect, const SimpleSegment<T>& ssegment){return -test(ssegment, rect);}
@@ -272,13 +284,14 @@ namespace Collision
 	Result test(const Vector2<T>& point, const Circle<T>& circle)
 	{
 		Vector2<T> penetration = point-circle.position;
+		auto dist = std::abs(penetration.magnatude() - circle.radius);
 		if(penetration.magnatudeSquared() <= circle.radius * circle.radius)
 		{
 			penetration.resizeSelf(circle.radius - penetration.magnatude());
-			return Result(true, penetration.x, penetration.y);
+			return Result(true, penetration.x, penetration.y, dist);
 		}
 		
-		return Result(false, 0, 0);
+		return Result(false, 0, 0, dist);
 	}
 	template <class T>
 	Result test( const Circle<T>& circle, const Vector2<T>& point){return -test(point, circle);}
@@ -375,9 +388,21 @@ namespace Collision
 	template <class T>
 	Result test(const SimpleSegment<T>& ssegment, const Circle<T>& circle)
 	{
-	    // TODO ??
-	    return test<T>(ssegment.toRect(), circle);
-		
+	    Result simpleRes = Collision::test(ssegment.isVertical ? circle.position.y : circle.position.x, ssegment.getRange());
+	    auto distance = Collision::test(ssegment.isVertical ? circle.getRangeY() : circle.getRangeX(), ssegment.getRange());
+        if(ssegment.isVertical && simpleRes)
+        {
+            auto dist = std::abs(circle.position.x - ssegment.position.x);
+            return Result(dist <= circle.radius, (circle.position.x < ssegment.position.x ? 1 : -1) * (circle.radius - dist), 0, distance);
+        }
+        if(!ssegment.isVertical && simpleRes)
+        {
+            auto dist = std::abs(circle.position.y - ssegment.position.y);
+            return Result(dist <= circle.radius, 0, (circle.position.y < ssegment.position.y ? 1 : -1) * (circle.radius - dist), distance);
+        }
+        Result r = Result::getWorse(test(ssegment.position, circle), test(ssegment.getEnd(), circle));
+        r.distance = distance;
+        return r;		
 	}
 	template <class T>
 	Result test( const Circle<T>& circle, const SimpleSegment<T>& ssegment){return -test(ssegment, circle);}
@@ -530,8 +555,7 @@ typedef FixedShapeCollider<SimpleSegment<double> >  FixedSimpleSegmentCollider;
 template<typename TObject1, typename TObject2, typename THandler>
 void handleCollision(TObject1& object1, TObject2& object2, THandler handler)
 {
-    Collision::Result result;
-	result = object1.getCollider()->test(object2.getCollider());
+    Collision::Result result = object1.getCollider()->test(object2.getCollider());
     if(result)
     {
 		handler(result, object1, object2);

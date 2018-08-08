@@ -101,13 +101,14 @@ public:
         {
             if(platform.collider.isVertical)
 			{
-				if(std::abs(result.yPenetration) <= 0.5)
+                
+				if(std::abs(result.distance) <= 0.5)
 					return;
 				actor.velocity.x = 0;
 			}
 			else
 			{
-				if(std::abs(result.xPenetration) <= 0.5)
+				if(std::abs(result.distance) <= 0.5)
 					return;
 				actor.velocity.y = 0;
 			}

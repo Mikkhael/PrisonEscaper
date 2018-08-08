@@ -22,7 +22,8 @@ public:
 		mass = 500;
 		velocity = velocity_;
 		setPosition(position_);
-		setCollider(Rect<double>(Vector2d(4, 4), Vector2d(4, 4)));
+		//setCollider(Circle<double>(Vector2d(2, 2), 2));
+		setCollider(Rect<double>({0,0}, {4,4}));
 	}
 	
 	virtual ~Cannonball(){};

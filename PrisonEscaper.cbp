@@ -50,10 +50,10 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 			<Add option="-DSFML_STATIC" />
-			<Add directory="D:/Program files (x86)/CodeBlocks/SFML/SFML-2.4.2/include" />
+			<Add directory="C:/Program files (x86)/CodeBlocks/SFML/SFML-2.4.2/include" />
 		</Compiler>
 		<Linker>
-			<Add directory="D:/Program files (x86)/CodeBlocks/SFML/SFML-2.4.2/lib" />
+			<Add directory="C:/Program files (x86)/CodeBlocks/SFML/SFML-2.4.2/lib" />
 		</Linker>
 		<Unit filename="Animations.hpp" />
 		<Unit filename="Cannon.hpp" />

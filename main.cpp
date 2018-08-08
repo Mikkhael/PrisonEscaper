@@ -1,10 +1,10 @@
 #include <SFML/Graphics.hpp>
+bool TAK= false;
 #include "Keyboard.hpp"
 #include "Colisions.hpp"
 #include "Room.hpp"
 #include "Player.hpp"
 #include "Cannon.hpp"
-
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Prison Escaper");
@@ -73,9 +73,10 @@ int main()
 		{
 			subDeltaTime = deltaTime > maxSubsteppingDeltaTime ? maxSubsteppingDeltaTime : deltaTime;
 			
+			TAK = true;
 			player.update(subDeltaTime);
+			TAK = false;
 			Cannonball::updateAll(subDeltaTime);
-			
 			deltaTime -= maxSubsteppingDeltaTime;
 		}
 		
