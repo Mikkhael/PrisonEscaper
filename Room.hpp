@@ -24,7 +24,7 @@ namespace WallTypes
 }
 
 
-class Room : public SpriteActor
+class Room : public SpriteActor, public ActorCollection<Room>
 {
 	bool 		collidableBounds;
 		
@@ -70,7 +70,6 @@ public:
 };
 
 bool Room::autoOffsetWallTexture = true;
-std::vector<Room> rooms;
 std::vector<Platform> platforms;
 
 #endif // ROOM_HPP_INCLUDED

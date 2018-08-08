@@ -4,9 +4,8 @@
 #include "Object.hpp"
 
 
-class Cannonball : public SpriteActor
+class Cannonball : public SpriteActor, public ActorCollection<Cannonball>
 {
-	static std::vector<Cannonball> cannonballs;
 public:
 	
 	
@@ -15,28 +14,6 @@ public:
 	{
 		updateKinematics(deltaTime);
 		moveOutOfWalls(platforms);
-	}
-	
-	static void spawn(const Vector2d& position_, const Vector2d& velocity_)
-	{
-		std::cout << "Spawning cannonball..." << std::endl;
-		cannonballs.emplace_back(position_, velocity_);
-	}
-	
-	static void updateAll(double deltaTime)
-	{
-		for(auto& cannonball : cannonballs)
-		{
-			cannonball.update(deltaTime);
-		}
-	}
-	
-	static void drawAll(sf::RenderTarget& rt, const sf::RenderStates& states = sf::RenderStates::Default)
-	{
-		for(auto& cannonball : cannonballs)
-		{
-			cannonball.draw(rt, states);
-		}
 	}
 		
 	Cannonball(const Vector2d& position_ = Vectors::null, const Vector2d& velocity_ = Vectors::null)
@@ -51,6 +28,6 @@ public:
 	virtual ~Cannonball(){};
 };
 
-std::vector<Cannonball> Cannonball::cannonballs;
+//std::vector<Cannonball*> ActorCollection<Cannonball>::list;
 
 #endif // CANNON_HPP_INCLUDED

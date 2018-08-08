@@ -22,11 +22,11 @@ int main()
 	
 	std::cout << "Generating map..." << std::endl;
 	
-	rooms.emplace_back(Rect<double>(50, 15, 390, 155), WallTypes::Rocks,  platforms);
-	rooms.emplace_back(Rect<double>(25, 170, 200, 30), WallTypes::Bricks, platforms);
-	rooms.emplace_back(Rect<double>(40, 200, 400, 20), WallTypes::Bricks, platforms);
-	rooms.emplace_back(Rect<double>(440, 15, 50, 300), WallTypes::Bricks, platforms);
-	rooms.emplace_back(Rect<double>(100, 100, 40, 40), WallTypes::Bricks);
+	Room::spawn(new Room(Rect<double>(50, 15, 390, 155), WallTypes::Rocks,  platforms));
+	Room::spawn(new Room(Rect<double>(25, 170, 200, 30), WallTypes::Bricks, platforms));
+	Room::spawn(new Room(Rect<double>(40, 200, 400, 20), WallTypes::Bricks, platforms));
+	Room::spawn(new Room(Rect<double>(440, 15, 50, 300), WallTypes::Bricks, platforms));
+	Room::spawn(new Room(Rect<double>(100, 100, 40, 40), WallTypes::Bricks));
 	
 	
 	std::cout << "Adding collision platforms..." << std::endl;
@@ -74,7 +74,7 @@ int main()
 			subDeltaTime = deltaTime > maxSubsteppingDeltaTime ? maxSubsteppingDeltaTime : deltaTime;
 			
 			player.update(subDeltaTime);
-			Cannonball::updateAll(deltaTime);
+			Cannonball::updateAll(subDeltaTime);
 			
 			deltaTime -= maxSubsteppingDeltaTime;
 		}
@@ -84,15 +84,14 @@ int main()
         // Draw
         window.clear();
         
-        for(auto& room : rooms)
-        {
-            room.draw(window);
-        }
-		Cannonball::drawAll(window);
+        Room::drawAll(window);
+		/*
         for(auto& platform : platforms)
         {
             platform.draw(window);
         }
+        */
+		Cannonball::drawAll(window);
         player.draw(window);
         
         window.draw(circle);

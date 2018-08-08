@@ -158,6 +158,61 @@ public:
 	
 };
 
+template<class T>
+class ActorCollection
+{
+    static std::vector<T*> list;
+public:
+    static void drawAll(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default)
+    {
+        for(auto actor : list)
+        {
+            actor->draw(target, states);
+        }
+    }
+    static void updateAll(double deltaTime)
+    {
+        for(auto actor : list)
+        {
+            actor->update(deltaTime);
+        }
+    }
+    static bool spawn(T* actor)
+    {
+        for(auto it = list.begin(); it < list.end(); it++)
+        {
+            if(*it == actor)
+            {
+                return false;
+            }
+        }
+        list.push_back(actor);
+        return true;
+    }
+    static bool despawn(T* actor)
+    {
+        for(auto it = list.begin(); it < list.end(); it++)
+        {
+            if(*it == actor)
+            {
+                delete *it;
+                list.erase(it);
+                return true;
+            }
+        }
+        return false;
+    }
+    static void despawnAll()
+    {
+        for(auto it = list.begin(); it < list.end(); it++)
+        {
+            delete *it;
+        }
+        list.erase(list.begin(), list.end());
+    }
+};
+template<class T>
+std::vector<T*> ActorCollection<T>::list;
 
 class SpriteActor : public Actor
 {	
@@ -300,6 +355,5 @@ public:
 	
 	virtual ~AnimatedSpriteActor(){}
 };
-
 
 #endif // OBJECT_HPP_INCLUDED
