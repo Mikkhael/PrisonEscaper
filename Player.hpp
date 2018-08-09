@@ -65,7 +65,7 @@ public:
 		
 		step *= speed * deltaTime;
 		
-		if(!stateManager.isInAir && Controls::isTapped(Action::jump))
+		if(!stateManager.isInAir && Controls::isPressed(Action::jump))
 		{
 			velocity += Vectors::down * jumpForce;
 		}
@@ -76,12 +76,13 @@ public:
 			Cannonball::spawn(new Cannonball(getPosition(), vel));
 		}
 		
-				
-		updateKinematics(deltaTime, step);
-		Vector2d shift = moveOutOfWalls(platforms);
 		
-		stateManager.isInAir = shift.y > 0;
-		
+		updateSubstepKinematics(deltaTime, step, 10000, [this](double deltaTime)
+        {
+            Vector2d shift = moveOutOfWalls(platforms);
+            stateManager.isInAir = shift.y >= 0;
+        });
+        
 		stateManager.manageState(*this);
 	}
 	
@@ -95,9 +96,9 @@ public:
 	{
 		setPosition(position);
 		isKinematic = true;
-		setCollider(Rect<double>(0,0,16,16));
+		setCollider(Rect<double>(6,1,4,15));
 		mass = 500;
-		jumpForce = std::sqrt(mass * (16 * 3) * 2);
+		jumpForce = std::sqrt(mass * (16 * 5) * 2);
     }
     
     virtual ~Player(){}

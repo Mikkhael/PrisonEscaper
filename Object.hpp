@@ -33,11 +33,42 @@ public:
 	double 		mass;
 	Vector2d 	velocity;
 	
-	void updateKinematics(double deltaTime, const Vector2d& step = Vectors::null, double drag = globalDrag, const Vector2d& gravity = globalGravity)
+	void updateKinematics(double deltaTime, const Vector2d& step = Vectors::null)
 	{
-		velocity += gravity * mass * deltaTime;
+		velocity += globalGravity * mass * deltaTime;
 		move(velocity * deltaTime + step);
-		velocity *= (1-drag*deltaTime);
+		velocity *= (1-globalDrag*deltaTime);
+	}
+	
+	template<class THandler>
+	void updateSubstepKinematics(double deltaTime,const Vector2d& step, double maxShift, THandler handler)
+	{
+	    updateSubstepKinematics(deltaTime, maxShift, handler, step);
+	}
+	
+	template<class THandler>
+	void updateSubstepKinematics(double deltaTime, double maxShift, THandler handler, const Vector2d& step = Vectors::null)
+	{
+		Vector2d fullShift, subShift, newStep = step;
+		double   sub, subDeltaTime, newDeltaTime = deltaTime;
+		do
+        {   
+            velocity += globalGravity * mass * newDeltaTime;
+            
+            fullShift    = velocity * newDeltaTime + newStep;
+            sub          = std::ceil(fullShift.magnatude() / maxShift);
+            subDeltaTime = newDeltaTime / sub;
+            subShift     = fullShift    / sub;
+            
+            move(subShift);
+            velocity *= (1-globalDrag*newDeltaTime);
+            
+            handler(subDeltaTime);
+            
+            newDeltaTime -= subDeltaTime;
+            newStep      -= step / sub;
+            
+        }while(sub > 1);
 	}
 	
 	virtual void update(double deltaTime)
@@ -96,8 +127,9 @@ public:
     
     Vector2d moveOutOfWalls(std::vector<Platform>& platforms)
     {
-    	Vector2d shift;
-    	handleAllCollisions(*this, platforms.begin(), platforms.end(), [&shift](Collision::Result& result, Actor& actor, Platform& platform)
+    	Vector2d shift(0,0);
+    	int tak = 0;
+    	handleAllCollisions(*this, platforms.begin(), platforms.end(), [&shift, &tak](Collision::Result& result, Actor& actor, Platform& platform)
         {
             if(platform.collider.isVertical)
 			{
@@ -112,7 +144,7 @@ public:
 					return;
 				actor.velocity.y = 0;
 			}
-            shift += moveOutOfWall(result, actor, platform.collider);
+            shift += moveOutOfWall(result, actor);
         });
         return shift;
     }
@@ -123,7 +155,6 @@ public:
 			mass(0),
 			velocity(Vectors::null)
 	{
-		std::cout << "Cnst" << std::endl;
 	}	
 	
 	Actor(Actor&& a) noexcept
@@ -134,7 +165,6 @@ public:
 			
 	{
 		a.collider = nullptr;
-		std::cout << "Move" << std::endl;
 	}
 	
 	Actor(const Actor& a) 
@@ -148,13 +178,11 @@ public:
 		{
 			collider = a.collider->clonePtr();
 		}
-		std::cout << "Copy" << std::endl;
 	}
 	
 	virtual ~Actor()
 	{
 		removeCollider();
-		std::cout << "Dest" << std::endl;
 	}
 	
 };

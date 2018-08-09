@@ -583,17 +583,9 @@ Vector2d moveOutOfCollision(const Collision::Result& result, T1& object1, T2& ob
 }
 
 template<typename T1>
-Vector2d moveOutOfWall(const Collision::Result& result, T1& object, SimpleSegment<double>& wall)
+Vector2d moveOutOfWall(const Collision::Result& result, T1& object)
 {
-	Vector2d shift;
-    if(wall.isVertical)
-	{
-		shift = Vector2d(result.xPenetration, 0);
-    }
-    else
-	{
-		shift = Vector2d(0, result.yPenetration);
-	}
+	Vector2d shift = result.getPenetrationVector();
     object.move(shift);
 	return shift;
 }
