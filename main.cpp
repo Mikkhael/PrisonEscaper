@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp>
-bool TAK= false;
 #include "Keyboard.hpp"
 #include "Colisions.hpp"
 #include "Room.hpp"
@@ -69,17 +68,21 @@ int main()
 		Controls::updateKeyStates();
 		
 		// Update
+		
+		
 		while(deltaTime > 0)
 		{
 			subDeltaTime = deltaTime > maxSubsteppingDeltaTime ? maxSubsteppingDeltaTime : deltaTime;
 			
-			TAK = true;
 			player.update(subDeltaTime);
-			TAK = false;
 			Cannonball::updateAll(subDeltaTime);
 			deltaTime -= maxSubsteppingDeltaTime;
 		}
 		
+		/*
+		player.update(deltaTime);
+        Cannonball::updateAll(deltaTime);
+        */
 		circle.setPosition(Controls::getMouseView());
         
         // Draw

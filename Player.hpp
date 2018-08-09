@@ -77,7 +77,7 @@ public:
 		}
 		
 		
-		updateSubstepKinematics(deltaTime, step, 10000, [this](double deltaTime)
+		updateSubstepKinematics(deltaTime, step, 2, [this](double deltaTime)
         {
             Vector2d shift = moveOutOfWalls(platforms);
             stateManager.isInAir = shift.y >= 0;

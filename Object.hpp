@@ -50,25 +50,36 @@ public:
 	void updateSubstepKinematics(double deltaTime, double maxShift, THandler handler, const Vector2d& step = Vectors::null)
 	{
 		Vector2d fullShift, subShift, newStep = step;
-		double   sub, subDeltaTime, newDeltaTime = deltaTime;
+		double   subDeltaTime, newDeltaTime = deltaTime;
+		unsigned int sub;
+		
+        velocity += globalGravity * mass * deltaTime;
+        
+        std::cout << getPosition() << std::endl;
+        
 		do
         {   
-            velocity += globalGravity * mass * newDeltaTime;
-            
             fullShift    = velocity * newDeltaTime + newStep;
+            if(fullShift.magnatudeSquared() == 0)
+                break;
             sub          = std::ceil(fullShift.magnatude() / maxShift);
             subDeltaTime = newDeltaTime / sub;
             subShift     = fullShift    / sub;
             
             move(subShift);
-            velocity *= (1-globalDrag*newDeltaTime);
+            
+            if(subShift.magnatude() > maxShift)
+            {
+                std::cout << "AASDADD" << std::endl;
+            }
             
             handler(subDeltaTime);
             
             newDeltaTime -= subDeltaTime;
-            newStep      -= step / sub;
+            newStep      =  newStep - newStep / sub;
             
         }while(sub > 1);
+        velocity *= (1-globalDrag*deltaTime);
 	}
 	
 	virtual void update(double deltaTime)
