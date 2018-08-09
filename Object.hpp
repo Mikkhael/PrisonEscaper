@@ -55,23 +55,17 @@ public:
 		
         velocity += globalGravity * mass * deltaTime;
         
-        std::cout << getPosition() << std::endl;
         
 		do
         {   
             fullShift    = velocity * newDeltaTime + newStep;
-            if(fullShift.magnatudeSquared() == 0)
+            if(fullShift.magnatudeSquared() <= 0.0001)
                 break;
             sub          = std::ceil(fullShift.magnatude() / maxShift);
             subDeltaTime = newDeltaTime / sub;
             subShift     = fullShift    / sub;
             
             move(subShift);
-            
-            if(subShift.magnatude() > maxShift)
-            {
-                std::cout << "AASDADD" << std::endl;
-            }
             
             handler(subDeltaTime);
             

@@ -104,26 +104,26 @@ public:
 				if(key->isPressed())
 				{
 					isPressed = true;
-					if(actionStates[keyMap.first] 		== released)
-					{
-						actionStates[keyMap.first] = tapped;
-					}
-					else if(actionStates[keyMap.first] 	== tapped)
+					if(actionStates[keyMap.first] 		== tapped)
 					{
 						actionStates[keyMap.first] = pressed;
+					}
+					else if(actionStates[keyMap.first] 	!= pressed)
+					{
+						actionStates[keyMap.first] = tapped;
 					}
 					break;
 				}
 			}
 			if(!isPressed)
 			{
-				if(actionStates[keyMap.first] 		== pressed)
-				{
-					actionStates[keyMap.first] = untapped;
-				}
-				else if(actionStates[keyMap.first] 	== untapped)
+				if(actionStates[keyMap.first] 		== untapped)
 				{
 					actionStates[keyMap.first] = released;
+				}
+				else if(actionStates[keyMap.first] 	!= released)
+				{
+					actionStates[keyMap.first] = untapped;
 				}
 			}
 		}
@@ -142,6 +142,11 @@ public:
 	static bool isUntapped(Action action)
 	{
 		return actionStates[action] == untapped;
+	}
+	
+	static KeyState getState(Action action)
+	{
+	    return actionStates[action];
 	}
 	
 	

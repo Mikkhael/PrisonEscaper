@@ -2,6 +2,45 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
+	<File name="TextureManager.hpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="312" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="Room.hpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="373" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="Object.hpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1655" topLine="48" />
+		</Cursor>
+	</File>
+	<File name="Player.hpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1678" topLine="64" />
+		</Cursor>
+	</File>
+	<File name="Colisions.hpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="19115" topLine="496" />
+		</Cursor>
+		<Folding>
+			<Collapse line="20" />
+			<Collapse line="199" />
+		</Folding>
+	</File>
+	<File name="Cannon.hpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="637" topLine="4" />
+		</Cursor>
+	</File>
+	<File name="Keyboard.hpp" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1754" topLine="57" />
+		</Cursor>
+	</File>
 	<File name="Level.hpp" open="1" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="226" topLine="0" />
@@ -12,9 +51,19 @@
 			<Cursor1 position="1862" topLine="78" />
 		</Cursor>
 	</File>
-	<File name="TextureManager.hpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="312" topLine="0" />
+			<Cursor1 position="1949" topLine="50" />
+		</Cursor>
+	</File>
+	<File name="Vectors.hpp" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3589" topLine="87" />
+		</Cursor>
+	</File>
+	<File name="PLatform.hpp" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3005" topLine="57" />
 		</Cursor>
 	</File>
 	<File name="Animations.hpp" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -23,62 +72,6 @@
 		</Cursor>
 		<Folding>
 			<Collapse line="3" />
-		</Folding>
-	</File>
-	<File name="Keyboard.hpp" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1754" topLine="57" />
-		</Cursor>
-	</File>
-	<File name="Room.hpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="3" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="373" topLine="6" />
-		</Cursor>
-	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1795" topLine="46" />
-		</Cursor>
-	</File>
-	<File name="Vectors.hpp" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3589" topLine="126" />
-		</Cursor>
-	</File>
-	<File name="Cannon.hpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="332" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="Object.hpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2198" topLine="93" />
-		</Cursor>
-	</File>
-	<File name="PLatform.hpp" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3005" topLine="60" />
-		</Cursor>
-	</File>
-	<File name="Player.hpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1580" topLine="66" />
-		</Cursor>
-	</File>
-	<File name="Colisions.hpp" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="2" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="13777" topLine="186" />
-		</Cursor>
-		<Folding>
-			<Collapse line="20" />
-			<Collapse line="165" />
-			<Collapse line="178" />
-			<Collapse line="199" />
-			<Collapse line="238" />
-			<Collapse line="281" />
-			<Collapse line="291" />
-			<Collapse line="308" />
-			<Collapse line="323" />
 		</Folding>
 	</File>
 </CodeBlocks_layout_file>

@@ -12,8 +12,10 @@ public:
 	
 	void update(double deltaTime)
 	{
-		updateKinematics(deltaTime);
-		moveOutOfWalls(platforms);
+	    updateSubstepKinematics(deltaTime, 2, [this](double deltaTime)
+        {
+            moveOutOfWalls(platforms);
+        });
 	}
 		
 	Cannonball(const Vector2d& position_ = Vectors::null, const Vector2d& velocity_ = Vectors::null)

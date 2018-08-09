@@ -67,9 +67,11 @@ int main()
 		
 		Controls::updateKeyStates();
 		
+		std::cout << Controls::getState(shoot) << std::endl;
+		
 		// Update
 		
-		
+		/*
 		while(deltaTime > 0)
 		{
 			subDeltaTime = deltaTime > maxSubsteppingDeltaTime ? maxSubsteppingDeltaTime : deltaTime;
@@ -78,11 +80,13 @@ int main()
 			Cannonball::updateAll(subDeltaTime);
 			deltaTime -= maxSubsteppingDeltaTime;
 		}
+		*/
 		
-		/*
 		player.update(deltaTime);
         Cannonball::updateAll(deltaTime);
-        */
+        
+        
+        
 		circle.setPosition(Controls::getMouseView());
         
         // Draw
