@@ -52,8 +52,6 @@ public:
 		Vector2d fullShift, subShift, newStep = step, newVelocity;
 		double   subDeltaTime, newDeltaTime = deltaTime;
 		unsigned int sub;
-		
-        int ct= 0;
         
 		do
         {   
@@ -240,12 +238,23 @@ public:
     }
     static void despawnAll()
     {
-        for(auto it = list.begin(); it < list.end(); it++)
+        for(auto it = list.begin(); it != list.end(); it++)
         {
             delete *it;
         }
         list.erase(list.begin(), list.end());
     }
+    
+    template<class Thandler>
+    static void iterate(Thandler handler)
+    {
+        bool end = false;
+        for(auto it = list.begin(); it != list.end() && !end; it++)
+        {
+            end = handler(*(*it));
+        }
+    }
+    
 };
 template<class T>
 std::vector<T*> ActorCollection<T>::list;
