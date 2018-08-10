@@ -48,9 +48,9 @@ int main()
     double deltaTime   = 0;
     double currentTime = clock.getElapsedTime().asSeconds();
 	double lastTime    = currentTime;
-	double subDeltaTime = 0;
+	//double subDeltaTime = 0;
 	
-	double maxSubsteppingDeltaTime = 0.036;
+	//double maxSubsteppingDeltaTime = 0.036;
 	
     sf::Event event;
     while (window.isOpen())

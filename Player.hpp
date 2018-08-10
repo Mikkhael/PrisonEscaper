@@ -73,7 +73,10 @@ public:
 		if(Controls::isTapped(Action::shoot))
 		{
 			Vector2d vel = (Controls::getMouseView() - getPosition()).resize(shootForce);
-			Cannonball::spawn(new Cannonball(getPosition(), vel));
+			if(!Cannonball::shoot(getPosition(), vel))
+            {
+                std::cout << "Nope" << std::endl;
+            }
 		}
 		
 		

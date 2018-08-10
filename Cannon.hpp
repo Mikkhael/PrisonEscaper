@@ -17,6 +17,16 @@ public:
             moveOutOfWalls(platforms);
         });
 	}
+	
+	static bool shoot(const Vector2d& position_ = Vectors::null, const Vector2d& velocity_ = Vectors::null)
+	{
+	    if(Room::isPointInside(position_))
+        {
+            spawn(new Cannonball(position_, velocity_));
+            return true;
+        }
+        return false;
+	}
 		
 	Cannonball(const Vector2d& position_ = Vectors::null, const Vector2d& velocity_ = Vectors::null)
 		: SpriteActor(textureManager.get("assets/creatures/player.bmp"), {0, 32, 8, 8})
@@ -24,8 +34,9 @@ public:
 		mass = 500;
 		velocity = velocity_;
 		setPosition(position_);
-		//setCollider(Circle<double>(Vector2d(2, 2), 2));
-		setCollider(Rect<double>({0,0}, {4,4}));
+		sprite.setOrigin({2, 2});
+		setCollider(Circle<double>(Vector2d(0, 0), 2));
+		//setCollider(Rect<double>({0,0}, {4,4}));
 	}
 	
 	virtual ~Cannonball(){};

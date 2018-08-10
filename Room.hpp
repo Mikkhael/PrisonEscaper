@@ -37,6 +37,17 @@ public:
 		return Rect<double>(getPosition(), getSize());
 	}
 	
+	static bool isPointInside(const Vector2d& point)
+	{
+	    bool inside = false;
+	    iterate([&point, &inside](const Room& room)
+        {
+            inside = CollisionFast::test(point, room.getRect());
+            return inside;
+        });
+        return inside;
+	}
+	
 	Room(const Rect<double>& rect_, const WallType& wallType)
 		: SpriteActor(textureManager.get(wallType.textureName, true), wallType.defaultRect), collidableBounds(false)
 	{
@@ -64,6 +75,7 @@ public:
         platformsCollection.emplace_back(tempRect.getUpperRight(), tempRect.size.y, true);
 		
 	}
+	
 	
 	virtual ~Room(){}
 	
