@@ -24,6 +24,8 @@ class Player : public AnimatedSpriteActor
 	PointLightEmitter* lightEmitter;
 	
 	inline Vector2d getCenter(){return getPosition() + Vector2d(playerSpriteDimensions.x / 2, playerSpriteDimensions.y / 2);}
+	inline Vector2d getShootOrigin(){return getCenter();}
+	inline Vector2d getLightEmitterOrigin(){return getCenter();}
 public:
 	
 	struct StateManager
@@ -87,8 +89,8 @@ public:
 		
 		if(Controls::isTapped(Action::shoot))
 		{
-			Vector2d vel = (Controls::getMouseView() - getPosition()).resize(shootForce);
-			Vector2d pos = getCenter();
+			Vector2d vel = (Controls::getMouseView() - getShootOrigin()).resize(shootForce);
+			Vector2d pos = getShootOrigin();
 			if(Cannonball::shoot(pos, vel))
             {
                 isInFreefall = true;
@@ -112,7 +114,7 @@ public:
 		stateManager.manageState(*this);
 		
 		
-		lightEmitter->setPosition(getCenter());
+		lightEmitter->setPosition(getLightEmitterOrigin());
 	}
 	
 	virtual void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default) const

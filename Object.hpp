@@ -241,7 +241,7 @@ public:
     
     static bool spawn(T* element)
     {
-        std::cout << "Spawned " << typeid(T).name() << std::endl;
+        //std::cout << "Spawned " << typeid(T).name() << std::endl;
         for(auto it = list.begin(); it < list.end(); it++)
         {
             if(*it == element)
