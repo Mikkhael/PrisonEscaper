@@ -6,6 +6,10 @@
 
 class Cannonball : public SpriteActor, public ActorCollection<Cannonball>
 {
+    
+    static constexpr int        colliderDiameter    = 5;
+    static constexpr int        colliderRadius      = colliderDiameter / 2;
+    
 public:
 	
 	
@@ -29,14 +33,13 @@ public:
 	}
 		
 	Cannonball(const Vector2d& position_ = Vectors::null, const Vector2d& velocity_ = Vectors::null)
-		: SpriteActor(textureManager.get("assets/creatures/player.bmp"), {0, 32, 8, 8})
+		: SpriteActor(textureManager.get("assets/creatures/player.bmp"), {0, 32, colliderDiameter, colliderDiameter})
 	{
 		mass = 500;
 		velocity = velocity_;
 		setPosition(position_);
-		sprite.setOrigin({2, 2});
-		setCollider(Circle<double>(Vector2d(0, 0), 2));
-		//setCollider(Rect<double>({0,0}, {4,4}));
+		sprite.setOrigin({colliderRadius + 1, colliderRadius + 1});
+		setCollider(Circle<double>(Vector2d(0, 0), colliderRadius));
 	}
 	
 	virtual ~Cannonball(){};

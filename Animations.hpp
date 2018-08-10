@@ -137,11 +137,13 @@ struct AnimatedSpritePreset
 	{}
 };
 
+const Vector2i playerSpriteDimensions(16, 16);
+
 namespace AnimatedSpritePresets
 {
-	const AnimatedSpritePreset	PlayerIdle		= AnimatedSpritePreset("assets/creatures/player.bmp", 	sf::IntRect(0,0,16,16), 	2, 		2);
-	const AnimatedSpritePreset	PlayerWalk		= AnimatedSpritePreset("assets/creatures/player.bmp", 	sf::IntRect(0,16,16,16), 	0.5, 	4);
-	const AnimatedSpritePreset	PlayerFall		= AnimatedSpritePreset("assets/creatures/player.bmp", 	sf::IntRect(16,16,16,16), 	-1,		1);
+	const AnimatedSpritePreset	PlayerIdle		= AnimatedSpritePreset("assets/creatures/player.bmp", 	sf::IntRect(0,0,playerSpriteDimensions.x,playerSpriteDimensions.y), 	2, 		2);
+	const AnimatedSpritePreset	PlayerWalk		= AnimatedSpritePreset("assets/creatures/player.bmp", 	sf::IntRect(0,playerSpriteDimensions.y,playerSpriteDimensions.x,playerSpriteDimensions.y), 	0.5, 	4);
+	const AnimatedSpritePreset	PlayerFall		= AnimatedSpritePreset("assets/creatures/player.bmp", 	sf::IntRect(playerSpriteDimensions.x,playerSpriteDimensions.y,playerSpriteDimensions.x,playerSpriteDimensions.y), 	-1,		1);
 }
 
 class AnimatedSprite : public sf::Sprite

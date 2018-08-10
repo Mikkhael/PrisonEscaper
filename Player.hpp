@@ -12,6 +12,12 @@ class Player : public AnimatedSpriteActor
 	double speed = 100;
 	double shootForce = 500;
 	double jumpForce;
+	double reactionForce = 500;
+	
+	bool isInFreefall = false;
+	
+	static const int colliderWidth = 4;
+	static const int colliderHeight = 15;
 	
 public:
 	
@@ -52,18 +58,22 @@ public:
 		stateManager.isWalking = false;
 		if(Controls::isPressed(Action::right))
 		{
-			step += Vectors::foreward;
+		    if(!isInFreefall)
+            {
+                step += Vectors::foreward;
+            }
 			stateManager.isWalking = true;
 			stateManager.isTurnedRight = true;
 		}
 		if(Controls::isPressed(Action::left))
 		{
-			step += Vectors::backward;
+			if(!isInFreefall)
+            {
+                step += Vectors::backward;
+            }
 			stateManager.isWalking = true;
 			stateManager.isTurnedRight = false;
 		}
-		
-		step *= speed * deltaTime;
 		
 		if(!stateManager.isInAir && Controls::isPressed(Action::jump))
 		{
@@ -73,12 +83,14 @@ public:
 		if(Controls::isTapped(Action::shoot))
 		{
 			Vector2d vel = (Controls::getMouseView() - getPosition()).resize(shootForce);
-			if(!Cannonball::shoot(getPosition(), vel))
+			Vector2d pos = getPosition() + Vector2d(playerSpriteDimensions.x / 2, playerSpriteDimensions.y / 2);
+			if(Cannonball::shoot(pos, vel))
             {
-                std::cout << "Nope" << std::endl;
+                isInFreefall = true;
+                velocity += vel.resize((stateManager.isInAir ? -1 : -0.3) * reactionForce);
             }
 		}
-		
+		step *= speed * deltaTime;
 		
 		updateSubstepKinematics(deltaTime, step, 2, [this](double deltaTime)
         {
@@ -86,6 +98,12 @@ public:
             stateManager.isInAir = shift.y >= 0;
         });
         
+		if(!stateManager.isInAir)
+		{
+		    velocity.x = 0;
+		    isInFreefall = false;
+		}
+            
 		stateManager.manageState(*this);
 	}
 	
@@ -99,9 +117,14 @@ public:
 	{
 		setPosition(position);
 		isKinematic = true;
-		setCollider(Rect<double>(6,1,4,15));
+		setCollider(Rect<double>(
+                           (playerSpriteDimensions.x - colliderWidth) / 2,
+                           playerSpriteDimensions.y - colliderHeight,
+                           colliderWidth,
+                           colliderHeight
+                           ));
 		mass = 500;
-		jumpForce = std::sqrt(mass * (16 * 5) * 2);
+		jumpForce = std::sqrt(mass * (colliderHeight * 5) * 2);
     }
     
     virtual ~Player(){}
