@@ -49,23 +49,26 @@ public:
 	template<class THandler>
 	void updateSubstepKinematics(double deltaTime, double maxShift, THandler handler, const Vector2d& step = Vectors::null)
 	{
-		Vector2d fullShift, subShift, newStep = step;
+		Vector2d fullShift, subShift, newStep = step, newVelocity;
 		double   subDeltaTime, newDeltaTime = deltaTime;
 		unsigned int sub;
 		
-        velocity += globalGravity * mass * deltaTime;
-        
+        int ct= 0;
         
 		do
         {   
-            fullShift    = velocity * newDeltaTime + newStep;
-            if(fullShift.magnatudeSquared() <= 0.0001)
+            newVelocity = velocity + globalGravity * mass * newDeltaTime;
+            
+            fullShift    = newVelocity * newDeltaTime + newStep;
+            if(fullShift.magnatudeSquared() == 0)
                 break;
             sub          = std::ceil(fullShift.magnatude() / maxShift);
             subDeltaTime = newDeltaTime / sub;
             subShift     = fullShift    / sub;
             
+            velocity += globalGravity * mass * subDeltaTime;
             move(subShift);
+            velocity *= (1-globalDrag*subDeltaTime);
             
             handler(subDeltaTime);
             
@@ -73,7 +76,6 @@ public:
             newStep      =  newStep - newStep / sub;
             
         }while(sub > 1);
-        velocity *= (1-globalDrag*deltaTime);
 	}
 	
 	virtual void update(double deltaTime)

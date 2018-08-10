@@ -67,8 +67,6 @@ int main()
 		
 		Controls::updateKeyStates();
 		
-		std::cout << Controls::getState(shoot) << std::endl;
-		
 		// Update
 		
 		/*
