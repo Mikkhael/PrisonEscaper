@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include "Keyboard.hpp"
 #include "Colisions.hpp"
+#include "LightEmitter.hpp"
 #include "Room.hpp"
 #include "Player.hpp"
 #include "Cannon.hpp"
@@ -8,7 +9,9 @@ int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Prison Escaper");
     
-    window.setView(sf::View({0,0,500,500}));
+    const float zoom = 0.7;
+    
+    window.setView(sf::View({0,0,800 * zoom, 600 * zoom}));
 	
 	Controls::addKeyMapping(Action::left, 	sf::Keyboard::A);
 	Controls::addKeyMapping(Action::up, 	sf::Keyboard::W);
@@ -18,6 +21,8 @@ int main()
 	Controls::addKeyMapping(Action::shoot, 	sf::Mouse::Left);
 	
 	Controls::bindWindow(window);
+	
+	LightEmitter::createDefaultLightmapTextures(window.getSize());
 	
 	std::cout << "Generating map..." << std::endl;
 	
@@ -35,14 +40,7 @@ int main()
 	//platforms.push_back(Platform(Vector2d(100,100), 100, true));
 	
 	std::cout << "Spawning player..." << std::endl;
-	Player player(Vector2d(70, 50));
-		
-    
-    sf::CircleShape circle;
-    circle.setFillColor(sf::Color::Red);
-    circle.setRadius(3);
-    circle.setOrigin(3, 3);
-    
+	Player player(Vector2d(70, 50));    
 		
 	sf::Clock clock;
     double deltaTime   = 0;
@@ -84,11 +82,8 @@ int main()
         Cannonball::updateAll(deltaTime);
         
         
-        
-		circle.setPosition(Controls::getMouseView());
-        
         // Draw
-        window.clear();
+        window.clear(sf::Color::Black);
         
         Room::drawAll(window);
 		/*
@@ -100,7 +95,7 @@ int main()
 		Cannonball::drawAll(window);
         player.draw(window);
         
-        window.draw(circle);
+        LightEmitter::generateAndApplyLightMap(window);
         
         window.display();
     }

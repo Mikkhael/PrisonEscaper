@@ -1,9 +1,6 @@
 #ifndef PLATFORM_HPP_INCLUDED
 #define PLATFORM_HPP_INCLUDED
 
-
-#define DRAW_PLATFORMS
-
 class Platform : public FixedSimpleSegmentCollider
 {
     
@@ -82,5 +79,7 @@ public:
 	
 	#endif // DRAW_PLATFORMS
 };
+
+std::vector<Platform> platforms;
 
 #endif // PLATFORM_HPP_INCLUDED

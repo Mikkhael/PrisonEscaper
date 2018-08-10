@@ -108,6 +108,15 @@ public:
 		return Vector2<T>(position.x + length, position.y);
 	}
 	
+	Vector2<T> getCenter() const
+	{
+		if(isVertical)
+		{
+			return Vector2<T>(position.x, position.y + length*0.5);
+		}
+		return Vector2<T>(position.x + length*0.5, position.y);
+	}
+	
 	Vector2<T> getVector() const
 	{
 		if(isVertical)

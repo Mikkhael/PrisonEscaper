@@ -2,6 +2,7 @@
 #define PLAYER_HPP_INCLUDED
 
 #include "Object.hpp"
+#include "LightEmitter.hpp"
 #include "Keyboard.hpp"
 #include "Room.hpp"
 #include "Cannon.hpp"
@@ -16,9 +17,13 @@ class Player : public AnimatedSpriteActor
 	
 	bool isInFreefall = false;
 	
-	static const int colliderWidth = 4;
-	static const int colliderHeight = 15;
+	static constexpr int colliderWidth = 4;
+	static constexpr int colliderHeight = 15;
+	static constexpr int defaultLightEmitterRdius = 100;
 	
+	PointLightEmitter* lightEmitter;
+	
+	inline Vector2d getCenter(){return getPosition() + Vector2d(playerSpriteDimensions.x / 2, playerSpriteDimensions.y / 2);}
 public:
 	
 	struct StateManager
@@ -83,7 +88,7 @@ public:
 		if(Controls::isTapped(Action::shoot))
 		{
 			Vector2d vel = (Controls::getMouseView() - getPosition()).resize(shootForce);
-			Vector2d pos = getPosition() + Vector2d(playerSpriteDimensions.x / 2, playerSpriteDimensions.y / 2);
+			Vector2d pos = getCenter();
 			if(Cannonball::shoot(pos, vel))
             {
                 isInFreefall = true;
@@ -105,6 +110,9 @@ public:
 		}
             
 		stateManager.manageState(*this);
+		
+		
+		lightEmitter->setPosition(getCenter());
 	}
 	
 	virtual void draw(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default) const
@@ -124,10 +132,18 @@ public:
                            colliderHeight
                            ));
 		mass = 500;
-		jumpForce = std::sqrt(mass * (colliderHeight * 5) * 2);
+		jumpForce = std::sqrt(mass * (colliderHeight) * 2);
+		
+		lightEmitter = new PointLightEmitter(defaultLightEmitterRdius);
+		LightEmitter::spawn(lightEmitter);
     }
     
-    virtual ~Player(){}
+    virtual ~Player(){
+        if(lightEmitter)
+        {
+            LightEmitter::despawn(lightEmitter);
+        }
+    }
 		
 };
 

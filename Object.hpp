@@ -1,6 +1,7 @@
 #ifndef OBJECT_HPP_INCLUDED
 #define OBJECT_HPP_INCLUDED
 
+#include <typeinfo>
 #include "Vectors.hpp"
 #include "TextureManager.hpp"
 #include "Animations.hpp"
@@ -192,6 +193,44 @@ public:
 	
 };
 
+class SimpleActor : public Actor
+{
+    Transform transform;
+public:
+    
+    virtual void setPosition (const Vector2d& 	position)
+	{
+		transform.position = position;
+	}
+	virtual void setScale	 (const Vector2d&	scale)
+	{
+		transform.scale = scale;
+	}
+	virtual void setRotation (double 			rotation)
+	{
+		transform.rotation = rotation;
+	}
+	
+	virtual Vector2d getPosition() 	const
+	{
+		return transform.position;
+	}
+	virtual Vector2d getScale() 	const
+	{
+		return transform.scale;
+	}
+	virtual double	 getRotation()	const
+	{
+		return transform.rotation;
+	}
+	
+	SimpleActor()
+        : transform()
+	{}
+	
+	virtual ~SimpleActor(){}
+};
+
 template<class T>
 class Collection
 {
@@ -202,6 +241,7 @@ public:
     
     static bool spawn(T* element)
     {
+        std::cout << "Spawned " << typeid(T).name() << std::endl;
         for(auto it = list.begin(); it < list.end(); it++)
         {
             if(*it == element)

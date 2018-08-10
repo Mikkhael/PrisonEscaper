@@ -82,6 +82,5 @@ public:
 };
 
 bool Room::autoOffsetWallTexture = true;
-std::vector<Platform> platforms;
 
 #endif // ROOM_HPP_INCLUDED

@@ -458,10 +458,11 @@
 1528739968 c:\users\bondg\desktop\prisonescaper\cannon.hpp
 	"Object.hpp"
 
-1533895666 source:c:\users\bondg_000\desktop\prisonescaper\main.cpp
+1533932546 source:c:\users\bondg_000\desktop\prisonescaper\main.cpp
 	<SFML/Graphics.hpp>
 	"Keyboard.hpp"
 	"Colisions.hpp"
+	"LightEmitter.hpp"
 	"Room.hpp"
 	"Player.hpp"
 	"Cannon.hpp"
@@ -859,25 +860,26 @@
 	<vector>
 	"Vectors.hpp"
 
-1533914952 c:\users\bondg_000\desktop\prisonescaper\vectors.hpp
+1533926145 c:\users\bondg_000\desktop\prisonescaper\vectors.hpp
 	<iostream>
 	<cmath>
 
 1533844889 c:\users\bondg_000\desktop\prisonescaper\colisions.hpp
 	"Shapes.hpp"
 
-1532871081 c:\users\bondg_000\desktop\prisonescaper\shapes.hpp
+1533930763 c:\users\bondg_000\desktop\prisonescaper\shapes.hpp
 	"Vectors.hpp"
 
-1533895654 c:\users\bondg_000\desktop\prisonescaper\room.hpp
+1533929718 c:\users\bondg_000\desktop\prisonescaper\room.hpp
 	"Colisions.hpp"
 	"PLatform.hpp"
 	<vector>
 	"Object.hpp"
 
-1533764560 c:\users\bondg_000\desktop\prisonescaper\platform.hpp
+1533929724 c:\users\bondg_000\desktop\prisonescaper\platform.hpp
 
-1533922300 c:\users\bondg_000\desktop\prisonescaper\object.hpp
+1533927543 c:\users\bondg_000\desktop\prisonescaper\object.hpp
+	<typeinfo>
 	"Vectors.hpp"
 	"TextureManager.hpp"
 	"Animations.hpp"
@@ -891,12 +893,18 @@
 1533906951 c:\users\bondg_000\desktop\prisonescaper\animations.hpp
 	"TextureManager.hpp"
 
-1533909680 c:\users\bondg_000\desktop\prisonescaper\player.hpp
+1533929384 c:\users\bondg_000\desktop\prisonescaper\player.hpp
 	"Object.hpp"
+	"LightEmitter.hpp"
 	"Keyboard.hpp"
 	"Room.hpp"
 	"Cannon.hpp"
 
 1533907982 c:\users\bondg_000\desktop\prisonescaper\cannon.hpp
 	"Object.hpp"
+
+1533933536 c:\users\bondg_000\desktop\prisonescaper\lightemitter.hpp
+	"Object.hpp"
+	"PLatform.hpp"
+	<vector>
 

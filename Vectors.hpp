@@ -264,9 +264,14 @@ namespace Vectors
 
 struct Transform
 {
-	Vector2<double> position= Vectors::null;
-	Vector2<double> scale	= Vectors::units;
-	double rotation			= 0;
+	Vector2<double> position;
+	double rotation;
+	Vector2<double> scale;
+	
+	Transform(const Vector2d& position_ = Vectors::null, double rotation_ = 0, const Vector2d& scale_ = Vectors::units)
+        : position(position_), rotation(rotation_), scale(scale_)
+	{
+	}
 };
 
 class Transformable
@@ -292,6 +297,32 @@ public:
 	{
 		setRotation(getRotation() + rotation);
 	}
+	
+	void setTransform(const Transformable& t)
+	{
+	    setPosition(t.getPosition());
+	    setRotation(t.getRotation());
+	    setScale(t.getScale());
+	}
+	void setTransform(const Transform& t)
+	{
+	    setPosition(t.position);
+	    setRotation(t.rotation);
+	    setScale(t.scale);
+	}
+	void setTransform(const Vector2d& position, double rotation, const Vector2d& scale)
+	{
+	    setPosition(position);
+	    setRotation(rotation);
+	    setScale(scale);
+	}
+	
+	Transform getTransform()
+	{
+	    return Transform(getPosition(), getRotation(), getScale());
+	}
+	
+	virtual ~Transformable(){};
 };
 
 class SimpleTransformable : public Transformable
@@ -324,6 +355,8 @@ public:
 	{
 		return transform.rotation;
 	}
+	
+	virtual ~SimpleTransformable(){};
 };
 
 template<class T>
