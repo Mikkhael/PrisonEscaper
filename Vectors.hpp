@@ -294,6 +294,38 @@ public:
 	}
 };
 
+class SimpleTransformable : public Transformable
+{
+    Transform transform;
+public:
+    
+    virtual void setPosition (const Vector2d& 	position)
+	{
+		transform.position = position;
+	}
+	virtual void setScale	 (const Vector2d&	scale)
+	{
+		transform.scale = scale;
+	}
+	virtual void setRotation (double 			rotation)
+	{
+		transform.rotation = rotation;
+	}
+	
+	virtual Vector2d getPosition() 	const
+	{
+		return transform.position;
+	}
+	virtual Vector2d getScale() 	const
+	{
+		return transform.scale;
+	}
+	virtual double	 getRotation()	const
+	{
+		return transform.rotation;
+	}
+};
+
 template<class T>
 std::ostream& operator<<(std::ostream& cout, const Vector2<T>& vector)
 {

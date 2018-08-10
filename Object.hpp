@@ -193,41 +193,31 @@ public:
 };
 
 template<class T>
-class ActorCollection
+class Collection
 {
+protected:
+    
     static std::vector<T*> list;
 public:
-    static void drawAll(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default)
-    {
-        for(auto actor : list)
-        {
-            actor->draw(target, states);
-        }
-    }
-    static void updateAll(double deltaTime)
-    {
-        for(auto actor : list)
-        {
-            actor->update(deltaTime);
-        }
-    }
-    static bool spawn(T* actor)
+    
+    static bool spawn(T* element)
     {
         for(auto it = list.begin(); it < list.end(); it++)
         {
-            if(*it == actor)
+            if(*it == element)
             {
                 return false;
             }
         }
-        list.push_back(actor);
+        list.push_back(element);
         return true;
     }
-    static bool despawn(T* actor)
+    
+    static bool despawn(T* element)
     {
         for(auto it = list.begin(); it < list.end(); it++)
         {
-            if(*it == actor)
+            if(*it == element)
             {
                 delete *it;
                 list.erase(it);
@@ -236,6 +226,7 @@ public:
         }
         return false;
     }
+    
     static void despawnAll()
     {
         for(auto it = list.begin(); it != list.end(); it++)
@@ -254,10 +245,30 @@ public:
             end = handler(*(*it));
         }
     }
-    
 };
+
 template<class T>
-std::vector<T*> ActorCollection<T>::list;
+std::vector<T*> Collection<T>::list;
+
+template<class T>
+class ActorCollection : public Collection<T>
+{
+public:
+    static void drawAll(sf::RenderTarget& target, const sf::RenderStates& states = sf::RenderStates::Default)
+    {
+        for(auto actor : Collection<T>::list)
+        {
+            actor->draw(target, states);
+        }
+    }
+    static void updateAll(double deltaTime)
+    {
+        for(auto actor : Collection<T>::list)
+        {
+            actor->update(deltaTime);
+        }
+    }
+};
 
 class SpriteActor : public Actor
 {	
