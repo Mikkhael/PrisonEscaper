@@ -7,8 +7,8 @@
 class Cannonball : public SpriteActor, public ActorCollection<Cannonball>
 {
     
-    static constexpr int        colliderDiameter    = 5;
-    static constexpr int        colliderRadius      = colliderDiameter / 2;
+    static constexpr int colliderDiameter    = 5;
+    static constexpr int colliderRadius      = colliderDiameter / 2;
     
 public:
 	
@@ -33,7 +33,7 @@ public:
 	}
 		
 	Cannonball(const Vector2d& position_ = Vectors::null, const Vector2d& velocity_ = Vectors::null)
-		: SpriteActor(textureManager.get("assets/creatures/player.bmp"), {0, 32, colliderDiameter, colliderDiameter})
+		: SpriteActor(textureManager.get(CannonballSprite::path), CannonballSprite::Rect)
 	{
 		mass = 500;
 		velocity = velocity_;

@@ -141,9 +141,9 @@ const Vector2i playerSpriteDimensions(16, 16);
 
 namespace AnimatedSpritePresets
 {
-	const AnimatedSpritePreset	PlayerIdle		= AnimatedSpritePreset("assets/creatures/player.bmp", 	sf::IntRect(0,0,playerSpriteDimensions.x,playerSpriteDimensions.y), 	2, 		2);
-	const AnimatedSpritePreset	PlayerWalk		= AnimatedSpritePreset("assets/creatures/player.bmp", 	sf::IntRect(0,playerSpriteDimensions.y,playerSpriteDimensions.x,playerSpriteDimensions.y), 	0.5, 	4);
-	const AnimatedSpritePreset	PlayerFall		= AnimatedSpritePreset("assets/creatures/player.bmp", 	sf::IntRect(playerSpriteDimensions.x,playerSpriteDimensions.y,playerSpriteDimensions.x,playerSpriteDimensions.y), 	-1,		1);
+	const AnimatedSpritePreset	PlayerIdle		= AnimatedSpritePreset(PlayerSprite::path, 	sf::IntRect(0,0,PlayerSprite::width,PlayerSprite::height), 	2, 		2);
+	const AnimatedSpritePreset	PlayerWalk		= AnimatedSpritePreset(PlayerSprite::path, 	sf::IntRect(0,PlayerSprite::height,PlayerSprite::width,PlayerSprite::height), 	0.5, 	4);
+	const AnimatedSpritePreset	PlayerFall		= AnimatedSpritePreset(PlayerSprite::path, 	sf::IntRect(PlayerSprite::width,PlayerSprite::height,PlayerSprite::width,PlayerSprite::height), 	-1,		1);
 }
 
 class AnimatedSprite : public sf::Sprite

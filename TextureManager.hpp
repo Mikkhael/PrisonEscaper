@@ -1,5 +1,6 @@
 #ifndef TEXTUREMANAGER_HPP_INCLUDED
 #define TEXTUREMANAGER_HPP_INCLUDED
+#include "TexturesInfo.hpp"
 #include <map>
 
 class TextureManager

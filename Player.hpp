@@ -23,7 +23,7 @@ class Player : public AnimatedSpriteActor
 	
 	PointLightEmitter* lightEmitter;
 	
-	inline Vector2d getCenter(){return getPosition() + Vector2d(playerSpriteDimensions.x / 2, playerSpriteDimensions.y / 2);}
+	inline Vector2d getCenter(){return getPosition() + Vector2d(PlayerSprite::width / 2, PlayerSprite::height / 2);}
 	inline Vector2d getShootOrigin(){return getCenter();}
 	inline Vector2d getLightEmitterOrigin(){return getCenter();}
 public:
@@ -128,8 +128,8 @@ public:
 		setPosition(position);
 		isKinematic = true;
 		setCollider(Rect<double>(
-                           (playerSpriteDimensions.x - colliderWidth) / 2,
-                           playerSpriteDimensions.y - colliderHeight,
+                           (PlayerSprite::width - colliderWidth) / 2,
+                           PlayerSprite::height - colliderHeight,
                            colliderWidth,
                            colliderHeight
                            ));

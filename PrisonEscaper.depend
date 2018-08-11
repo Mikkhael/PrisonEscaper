@@ -878,7 +878,7 @@
 
 1533929724 c:\users\bondg_000\desktop\prisonescaper\platform.hpp
 
-1533927543 c:\users\bondg_000\desktop\prisonescaper\object.hpp
+1533934365 c:\users\bondg_000\desktop\prisonescaper\object.hpp
 	<typeinfo>
 	"Vectors.hpp"
 	"TextureManager.hpp"
@@ -887,24 +887,27 @@
 	"Shapes.hpp"
 	"PLatform.hpp"
 
-1524828265 c:\users\bondg_000\desktop\prisonescaper\texturemanager.hpp
+1533999640 c:\users\bondg_000\desktop\prisonescaper\texturemanager.hpp
+	"TexturesInfo.hpp"
 	<map>
 
-1533906951 c:\users\bondg_000\desktop\prisonescaper\animations.hpp
+1533999647 c:\users\bondg_000\desktop\prisonescaper\animations.hpp
 	"TextureManager.hpp"
 
-1533934238 c:\users\bondg_000\desktop\prisonescaper\player.hpp
+1533999460 c:\users\bondg_000\desktop\prisonescaper\player.hpp
 	"Object.hpp"
 	"LightEmitter.hpp"
 	"Keyboard.hpp"
 	"Room.hpp"
 	"Cannon.hpp"
 
-1533907982 c:\users\bondg_000\desktop\prisonescaper\cannon.hpp
+1533999585 c:\users\bondg_000\desktop\prisonescaper\cannon.hpp
 	"Object.hpp"
 
 1533933536 c:\users\bondg_000\desktop\prisonescaper\lightemitter.hpp
 	"Object.hpp"
 	"PLatform.hpp"
 	<vector>
+
+1534001799 c:\users\bondg_000\desktop\prisonescaper\texturesinfo.hpp
 

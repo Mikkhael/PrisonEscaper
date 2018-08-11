@@ -60,6 +60,7 @@
 		<Unit filename="Colisions.hpp" />
 		<Unit filename="Keyboard.hpp" />
 		<Unit filename="Level.hpp" />
+		<Unit filename="LightEmitter.hpp" />
 		<Unit filename="Object.hpp" />
 		<Unit filename="PLatform.hpp" />
 		<Unit filename="Player.hpp" />
