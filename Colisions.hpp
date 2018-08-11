@@ -421,18 +421,18 @@ class Collider : public Collidable
 protected:
     
     
-    static void _getPositionedCollider(const Rect<double>& collider, Rect<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, const double& rotation)
+    static void _getPositionedCollider(const Rect<double>& collider, Rect<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, double rotation)
     {
         int rotations = 0;
         while(rotation > 45)
         {
             rotations++;
-            rotations -= 90;
+            rotation -= 90;
         }
         while(rotation < -45)
         {
             rotations--;
-            rotations += 90;
+            rotation += 90;
         }
         
         Rect<double> newCollider = collider.rotate(rotations);
@@ -454,14 +454,15 @@ protected:
         newCollider.position += position;
         
         positionedCollider = newCollider;
+        
     }
 
-    static void _getPositionedCollider(const Circle<double>& collider, Circle<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, const double& rotation)
+    static void _getPositionedCollider(const Circle<double>& collider, Circle<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, double rotation)
     {
         positionedCollider = Circle<double>((position * scale).rotate(rotation) + collider.position, std::abs(scale.x) * collider.radius);
     }
 
-    static void _getPositionedCollider(const SimpleSegment<double>& collider, SimpleSegment<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, const double& rotation)
+    static void _getPositionedCollider(const SimpleSegment<double>& collider, SimpleSegment<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, double rotation)
     {
         // TODO REPAIR
         positionedCollider = SimpleSegment<double>((position * scale) + collider.position, scale.x * collider.length, collider.isVertical);
@@ -479,7 +480,7 @@ public:
     virtual Collision::Result test(const Rect<double>&) const =0;
     virtual Collision::Result test(const Circle<double>&) const =0;
     virtual Collision::Result test(const SimpleSegment<double>&) const =0;
-    virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, const double& rotation = 0) =0;
+    virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, double rotation = 0) =0;
     void updateCollider(const Transformable& transform)
     {
         updateCollider(transform.getPosition(), transform.getScale(), transform.getRotation());
@@ -528,7 +529,7 @@ public:
     {
         return Collision::test(c, positionedCollider);
     }
-    virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, const double& rotation = 0)
+    virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, double rotation = 0)
     {
         _getPositionedCollider(collider, positionedCollider, position, scale, rotation);
     }
@@ -572,7 +573,7 @@ public:
     {
         return Collision::test(c, collider);
     }
-    virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, const double& rotation = 0)
+    virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, double rotation = 0)
     {
         return;
     }

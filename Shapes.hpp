@@ -86,7 +86,7 @@ public:
         
         Rect<T> rect = Rect<T>(position, size);
         T temp;
-        while(rotations > 0)
+        while(rotations-- > 0)
         {
             temp = rect.position.x;
             rect.position.x = -(rect.position.y + rect.size.y);
