@@ -894,7 +894,7 @@
 1533999647 c:\users\bondg_000\desktop\prisonescaper\animations.hpp
 	"TextureManager.hpp"
 
-1533999460 c:\users\bondg_000\desktop\prisonescaper\player.hpp
+1534002570 c:\users\bondg_000\desktop\prisonescaper\player.hpp
 	"Object.hpp"
 	"LightEmitter.hpp"
 	"Keyboard.hpp"
@@ -904,10 +904,10 @@
 1533999585 c:\users\bondg_000\desktop\prisonescaper\cannon.hpp
 	"Object.hpp"
 
-1533933536 c:\users\bondg_000\desktop\prisonescaper\lightemitter.hpp
+1534002246 c:\users\bondg_000\desktop\prisonescaper\lightemitter.hpp
 	"Object.hpp"
 	"PLatform.hpp"
 	<vector>
 
-1534001799 c:\users\bondg_000\desktop\prisonescaper\texturesinfo.hpp
+1534003203 c:\users\bondg_000\desktop\prisonescaper\texturesinfo.hpp
 

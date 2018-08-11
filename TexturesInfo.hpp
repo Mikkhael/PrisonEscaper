@@ -11,8 +11,8 @@ namespace PlayerSprite
 
 namespace CannonballSprite
 {
-    static const std::string path       = "assets/creatures/player.bmp";
-    static const sf::IntRect Rect(0,32,5,5);
+    static const std::string path       = "assets/objects/cannonball.bmp";
+    static const sf::IntRect Rect(0,0,5,5);
 };
 
 #endif // TEXTURESINFO_HPP_INCLUDED

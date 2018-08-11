@@ -11,6 +11,7 @@
 class Player : public AnimatedSpriteActor
 {
 	double speed = 100;
+	double freefallSpeed = 10;
 	double shootForce = 500;
 	double jumpForce;
 	double reactionForce = 500;
@@ -19,7 +20,7 @@ class Player : public AnimatedSpriteActor
 	
 	static constexpr int colliderWidth = 4;
 	static constexpr int colliderHeight = 15;
-	static constexpr int defaultLightEmitterRdius = 100;
+	static constexpr int defaultLightEmitterRdius = 1000;
 	
 	PointLightEmitter* lightEmitter;
 	
@@ -65,19 +66,13 @@ public:
 		stateManager.isWalking = false;
 		if(Controls::isPressed(Action::right))
 		{
-		    if(!isInFreefall)
-            {
-                step += Vectors::foreward;
-            }
+            step += Vectors::foreward;
 			stateManager.isWalking = true;
 			stateManager.isTurnedRight = true;
 		}
 		if(Controls::isPressed(Action::left))
 		{
-			if(!isInFreefall)
-            {
-                step += Vectors::backward;
-            }
+            step += Vectors::backward;
 			stateManager.isWalking = true;
 			stateManager.isTurnedRight = false;
 		}
@@ -97,7 +92,7 @@ public:
                 velocity += vel.resize((stateManager.isInAir ? -1 : -0.3) * reactionForce);
             }
 		}
-		step *= speed * deltaTime;
+		step *= (isInFreefall ? freefallSpeed : speed) * deltaTime;
 		
 		updateSubstepKinematics(deltaTime, step, 2, [this](double deltaTime)
         {
