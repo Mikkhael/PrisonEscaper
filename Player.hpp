@@ -121,7 +121,6 @@ public:
 		: AnimatedSpriteActor(AnimatedSpritePresets::PlayerIdle)
 	{
 		setPosition(position);
-		isKinematic = true;
 		setCollider(Rect<double>(
                            (PlayerSprite::width - colliderWidth) / 2,
                            PlayerSprite::height - colliderHeight,

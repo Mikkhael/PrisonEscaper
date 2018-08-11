@@ -22,6 +22,8 @@ protected:
             collider->updateCollider(getPosition(), getScale(), getRotation());
         }
     }
+    
+    Actor* parent = nullptr;
 public:
 	Collider* 	collider;
 	
@@ -30,7 +32,6 @@ public:
         return collider;
 	}
 	
-	bool		isKinematic;
 	double 		mass;
 	Vector2d 	velocity;
 	
@@ -134,20 +135,25 @@ public:
     Vector2d moveOutOfWalls(std::vector<Platform>& platforms)
     {
     	Vector2d shift(0,0);
-    	int tak = 0;
-    	handleAllCollisions(*this, platforms.begin(), platforms.end(), [&shift, &tak](Collision::Result& result, Actor& actor, Platform& platform)
+    	handleAllCollisions(*this, platforms.begin(), platforms.end(), [&shift](Collision::Result& result, Actor& actor, Platform& platform)
         {
             if(platform.collider.isVertical)
 			{
                 
-				if(std::abs(result.distance) <= 0.5)
+				if(std::abs(result.distance) <= 1)
+                {
+                    std::cout << "V " << result.distance << std::endl;
 					return;
+                }
 				actor.velocity.x = 0;
 			}
 			else
 			{
-				if(std::abs(result.distance) <= 0.5)
+				if(std::abs(result.distance) <= 1)
+                {
+                    std::cout << "H " << result.distance << std::endl;
 					return;
+                }
 				actor.velocity.y = 0;
 			}
             shift += moveOutOfWall(result, actor);
@@ -157,7 +163,6 @@ public:
 	
 	Actor()
 		: 	collider(nullptr),
-			isKinematic(false),
 			mass(0),
 			velocity(Vectors::null)
 	{
@@ -165,7 +170,6 @@ public:
 	
 	Actor(Actor&& a) noexcept
 		: 	collider(a.collider),
-			isKinematic(a.isKinematic),
 			mass(a.mass),
 			velocity(a.velocity)
 			
@@ -175,7 +179,6 @@ public:
 	
 	Actor(const Actor& a) 
 		: 	collider(nullptr),
-			isKinematic(a.isKinematic),
 			mass(a.mass),
 			velocity(a.velocity)
 			

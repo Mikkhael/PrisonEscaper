@@ -33,13 +33,14 @@ public:
 	}
 		
 	Cannonball(const Vector2d& position_ = Vectors::null, const Vector2d& velocity_ = Vectors::null)
-		: SpriteActor(textureManager.get(CannonballSprite::path), CannonballSprite::Rect)
+		: SpriteActor(textureManager.get(CannonballSprite::path, false), CannonballSprite::rect)
 	{
 		mass = 500;
 		velocity = velocity_;
 		setPosition(position_);
 		sprite.setOrigin({colliderRadius + 1, colliderRadius + 1});
 		setCollider(Circle<double>(Vector2d(0, 0), colliderRadius));
+		//setCollider(Rect<double>(Vector2d(-colliderRadius, -colliderRadius), Vector2d(colliderRadius, colliderRadius)));
 	}
 	
 	virtual ~Cannonball(){};

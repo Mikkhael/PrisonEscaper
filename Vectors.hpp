@@ -137,6 +137,19 @@ public:
     	return *this;
     }
     
+    Vector2<T> swap() const
+    {
+        return Vector2<T>(y, x);
+    }
+    
+    Vector2<T>& swapSelf()
+    {
+        T temp = x;
+        x = y;
+        y = temp;
+        return *this;
+    }
+    
     long double magnatudeSquared() const;
     long double magnatude() const;
     Vector2<double> normalize() const;
@@ -317,7 +330,14 @@ public:
 	    setScale(scale);
 	}
 	
-	Transform getTransform()
+	void applyTransformTo(sf::Transformable& t) const
+	{
+	    t.setPosition(getPosition());
+	    t.setRotation(getRotation());
+	    t.setScale(getScale());
+	}
+	
+	Transform getTransform() const
 	{
 	    return Transform(getPosition(), getRotation(), getScale());
 	}

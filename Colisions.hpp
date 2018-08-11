@@ -389,7 +389,7 @@ namespace Collision
 	Result test(const SimpleSegment<T>& ssegment, const Circle<T>& circle)
 	{
 	    Result simpleRes = Collision::test(ssegment.isVertical ? circle.position.y : circle.position.x, ssegment.getRange());
-	    auto distance = Collision::test(ssegment.isVertical ? circle.getRangeY() : circle.getRangeX(), ssegment.getRange());
+	    auto distance = Collision::test(ssegment.isVertical ? circle.getRangeY() : circle.getRangeX(), ssegment.getRange()).distance;
         if(ssegment.isVertical && simpleRes)
         {
             auto dist = std::abs(circle.position.x - ssegment.position.x);
@@ -407,20 +407,6 @@ namespace Collision
 	template <class T>
 	Result test( const Circle<T>& circle, const SimpleSegment<T>& ssegment){return -test(ssegment, circle);}
 }
-static void _getPositionedCollider(const Rect<double>& collider, Rect<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, const double& rotation)
-{
-	positionedCollider = Rect<double>(position + collider.position, collider.size * scale);
-}
-
-static void _getPositionedCollider(const Circle<double>& collider, Circle<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, const double& rotation)
-{
-	positionedCollider = Circle<double>(position + collider.position, scale.x * collider.radius);
-}
-
-static void _getPositionedCollider(const SimpleSegment<double>& collider, SimpleSegment<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, const double& rotation)
-{
-	positionedCollider = SimpleSegment<double>(position + collider.position, scale.x * collider.length, collider.isVertical);
-}
 
 class Collider;
 
@@ -432,6 +418,55 @@ public:
 
 class Collider : public Collidable
 {
+protected:
+    
+    
+    static void _getPositionedCollider(const Rect<double>& collider, Rect<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, const double& rotation)
+    {
+        int rotations = 0;
+        while(rotation > 45)
+        {
+            rotations++;
+            rotations -= 90;
+        }
+        while(rotation < -45)
+        {
+            rotations--;
+            rotations += 90;
+        }
+        
+        Rect<double> newCollider = collider.rotate(rotations);
+        
+        newCollider.position = collider.position * scale;
+        newCollider.size = collider.size * scale;
+        
+        if(newCollider.size.x < 0)
+        {
+            newCollider.position.x -= newCollider.size.x;
+            newCollider.size.x *= -1;
+        }
+        if(newCollider.size.y < 0)
+        {
+            newCollider.position.y -= newCollider.size.y;
+            newCollider.size.y *= -1;
+        }
+        
+        newCollider.position += position;
+        
+        positionedCollider = newCollider;
+    }
+
+    static void _getPositionedCollider(const Circle<double>& collider, Circle<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, const double& rotation)
+    {
+        positionedCollider = Circle<double>((position * scale).rotate(rotation) + collider.position, std::abs(scale.x) * collider.radius);
+    }
+
+    static void _getPositionedCollider(const SimpleSegment<double>& collider, SimpleSegment<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, const double& rotation)
+    {
+        // TODO REPAIR
+        positionedCollider = SimpleSegment<double>((position * scale) + collider.position, scale.x * collider.length, collider.isVertical);
+    }
+    
 public:
     virtual const Collider* getCollider() const
     {
@@ -445,7 +480,7 @@ public:
     virtual Collision::Result test(const Circle<double>&) const =0;
     virtual Collision::Result test(const SimpleSegment<double>&) const =0;
     virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, const double& rotation = 0) =0;
-    void updateCollider(const Transformable& transform )
+    void updateCollider(const Transformable& transform)
     {
         updateCollider(transform.getPosition(), transform.getScale(), transform.getRotation());
     }

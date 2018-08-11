@@ -4,6 +4,7 @@
 #include "LightEmitter.hpp"
 #include "Room.hpp"
 #include "Player.hpp"
+#include "WallTurret.hpp"
 #include "Cannon.hpp"
 int main()
 {
@@ -40,8 +41,14 @@ int main()
 	//platforms.push_back(Platform(Vector2d(100,100), 100, true));
 	
 	std::cout << "Spawning player..." << std::endl;
-	Player player(Vector2d(70, 50));    
-		
+	Player player(Vector2d(70, 50));
+	
+	/*
+	WallTurret::spawn(new WallTurret(WallTurret::Left, {50, 60}));
+	WallTurret::spawn(new WallTurret(WallTurret::Left, {100, 60}));
+	WallTurret::spawn(new WallTurret(WallTurret::Up, {200, 15}));
+    */
+    
 	sf::Clock clock;
     double deltaTime   = 0;
     double currentTime = clock.getElapsedTime().asSeconds();
@@ -65,6 +72,8 @@ int main()
 		
 		Controls::updateKeyStates();
 		
+		//std::cout << deltaTime << std::endl;
+		
 		// Update
 		
 		/*
@@ -80,6 +89,7 @@ int main()
 		
 		player.update(deltaTime);
         Cannonball::updateAll(deltaTime);
+        //WallTurret::updateAll(deltaTime);
         
         
         // Draw
@@ -92,6 +102,7 @@ int main()
             platform.draw(window);
         }
         */
+        //WallTurret::drawAll(window);
 		Cannonball::drawAll(window);
         player.draw(window);
         

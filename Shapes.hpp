@@ -39,11 +39,13 @@ public:
 		: position(pos), size(s)
 	{}
 	
-	Rect(const sf::Rect<T>& r)
+	template<class T2>
+	Rect(const sf::Rect<T2>& r)
 		: position(r.left, r.top), size(r.width, r.height)
 	{}
 	
-	operator sf::Rect<T>()
+	template<class T2>
+	operator sf::Rect<T2>()
 	{
 		return sf::Rect<T>(position.x, position.y, size.x, size.y);
 	}
@@ -72,6 +74,28 @@ public:
 	Vector2<T> getHorizontal() const
 	{
 		return Vector2<T>(position.x, position.x + size.x);
+	}
+	
+	Rect<T> rotate(int rotations) const
+	{
+	    rotations %= 4;
+	    if(rotations < 0)
+        {
+            rotations += 4;
+        }
+        
+        Rect<T> rect = Rect<T>(position, size);
+        T temp;
+        while(rotations > 0)
+        {
+            temp = rect.position.x;
+            rect.position.x = -(rect.position.y + rect.size.y);
+            rect.position.y = temp;
+            
+            rect.size.swapSelf();
+        }
+        
+        return rect;
 	}
 	
 };

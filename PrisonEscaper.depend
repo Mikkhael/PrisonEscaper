@@ -458,13 +458,14 @@
 1528739968 c:\users\bondg\desktop\prisonescaper\cannon.hpp
 	"Object.hpp"
 
-1533933655 source:c:\users\bondg_000\desktop\prisonescaper\main.cpp
+1534010589 source:c:\users\bondg_000\desktop\prisonescaper\main.cpp
 	<SFML/Graphics.hpp>
 	"Keyboard.hpp"
 	"Colisions.hpp"
 	"LightEmitter.hpp"
 	"Room.hpp"
 	"Player.hpp"
+	"WallTurret.hpp"
 	"Cannon.hpp"
 
 1517008869 c:\program files (x86)\codeblocks\sfml\sfml-2.4.2\include\sfml\graphics.hpp
@@ -860,14 +861,14 @@
 	<vector>
 	"Vectors.hpp"
 
-1533926145 c:\users\bondg_000\desktop\prisonescaper\vectors.hpp
+1534016863 c:\users\bondg_000\desktop\prisonescaper\vectors.hpp
 	<iostream>
 	<cmath>
 
-1533844889 c:\users\bondg_000\desktop\prisonescaper\colisions.hpp
+1534004190 c:\users\bondg_000\desktop\prisonescaper\colisions.hpp
 	"Shapes.hpp"
 
-1533930763 c:\users\bondg_000\desktop\prisonescaper\shapes.hpp
+1534010161 c:\users\bondg_000\desktop\prisonescaper\shapes.hpp
 	"Vectors.hpp"
 
 1533929718 c:\users\bondg_000\desktop\prisonescaper\room.hpp
@@ -878,7 +879,7 @@
 
 1533929724 c:\users\bondg_000\desktop\prisonescaper\platform.hpp
 
-1533934365 c:\users\bondg_000\desktop\prisonescaper\object.hpp
+1534016918 c:\users\bondg_000\desktop\prisonescaper\object.hpp
 	<typeinfo>
 	"Vectors.hpp"
 	"TextureManager.hpp"
@@ -894,14 +895,14 @@
 1533999647 c:\users\bondg_000\desktop\prisonescaper\animations.hpp
 	"TextureManager.hpp"
 
-1534002570 c:\users\bondg_000\desktop\prisonescaper\player.hpp
+1534006367 c:\users\bondg_000\desktop\prisonescaper\player.hpp
 	"Object.hpp"
 	"LightEmitter.hpp"
 	"Keyboard.hpp"
 	"Room.hpp"
 	"Cannon.hpp"
 
-1533999585 c:\users\bondg_000\desktop\prisonescaper\cannon.hpp
+1534008086 c:\users\bondg_000\desktop\prisonescaper\cannon.hpp
 	"Object.hpp"
 
 1534002246 c:\users\bondg_000\desktop\prisonescaper\lightemitter.hpp
@@ -909,5 +910,9 @@
 	"PLatform.hpp"
 	<vector>
 
-1534003203 c:\users\bondg_000\desktop\prisonescaper\texturesinfo.hpp
+1534010857 c:\users\bondg_000\desktop\prisonescaper\texturesinfo.hpp
+
+1534017035 c:\users\bondg_000\desktop\prisonescaper\wallturret.hpp
+	"TextureManager.hpp"
+	"Object.hpp"
 
