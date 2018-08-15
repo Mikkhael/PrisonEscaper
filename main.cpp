@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+bool tak = false;
 #include "Keyboard.hpp"
 #include "Colisions.hpp"
 #include "LightEmitter.hpp"
@@ -45,6 +46,7 @@ int main()
 	
 	
 	WallTurret::spawn(new WallTurret(WallTurret::Left, {50, 60}));
+	WallTurret::spawn(new WallTurret(WallTurret::Right, {150, 100}));
 	WallTurret::spawn(new WallTurret(WallTurret::Up, {200, 15}));
     
     

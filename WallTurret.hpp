@@ -7,7 +7,13 @@
 
 class WallTurret : public SpriteActor, public ActorCollection<WallTurret>
 {
-    
+protected:
+    void updateCollider()
+    {
+        tak = true;
+        SpriteActor::updateCollider();
+        tak = false;
+    }
 public:
     
     enum BaseDirection{Left=0, Up=1, Right=2, Down=3};
@@ -77,7 +83,7 @@ private:
     double gunAngle = 0;
     
     double gunWaitCounter = 0;
-    double updateGunAngle(double deltaTime)
+    void updateGunAngle(double deltaTime)
     {
         bool toSwitch = false;
         if(gunIsRotating)

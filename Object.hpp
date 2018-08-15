@@ -15,7 +15,7 @@ double 	 globalDrag		= 1;
 class Actor : public Transformable, public Collidable
 {
 protected:
-    void updateCollider()
+    virtual void updateCollider()
     {
         if(collider)
         {
@@ -160,7 +160,7 @@ public:
         });
         return shift;
     }
-	
+    
 	Actor()
 		: 	collider(nullptr),
 			mass(0),

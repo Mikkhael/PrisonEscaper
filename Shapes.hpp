@@ -95,6 +95,9 @@ public:
             rect.size.swapSelf();
         }
         
+        if(tak)
+            std::cout << "R: " << rect.position << " " << rect.size << std::endl;
+        
         return rect;
 	}
 	

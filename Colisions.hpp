@@ -437,8 +437,8 @@ protected:
         
         Rect<double> newCollider = collider.rotate(rotations);
         
-        newCollider.position = collider.position * scale;
-        newCollider.size = collider.size * scale;
+        newCollider.position *= scale;
+        newCollider.size *= scale;
         
         if(newCollider.size.x < 0)
         {
@@ -452,6 +452,8 @@ protected:
         }
         
         newCollider.position += position;
+        if(tak)
+            std::cout << newCollider.position << " " << newCollider.size << " Rotations: " << rotations << std::endl;
         
         positionedCollider = newCollider;
         
@@ -606,6 +608,8 @@ void handleAllCollisions(TObject& object, TFwdIterator begin, TFwdIterator end, 
         handleCollision(object, *it, handler);
     }
 }
+    
+
 
 
 

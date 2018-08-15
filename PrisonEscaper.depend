@@ -458,7 +458,7 @@
 1528739968 c:\users\bondg\desktop\prisonescaper\cannon.hpp
 	"Object.hpp"
 
-1534023379 source:c:\users\bondg_000\desktop\prisonescaper\main.cpp
+1534365061 source:c:\users\bondg_000\desktop\prisonescaper\main.cpp
 	<SFML/Graphics.hpp>
 	"Keyboard.hpp"
 	"Colisions.hpp"
@@ -865,10 +865,10 @@
 	<iostream>
 	<cmath>
 
-1534024148 c:\users\bondg_000\desktop\prisonescaper\colisions.hpp
+1534365286 c:\users\bondg_000\desktop\prisonescaper\colisions.hpp
 	"Shapes.hpp"
 
-1534024174 c:\users\bondg_000\desktop\prisonescaper\shapes.hpp
+1534365197 c:\users\bondg_000\desktop\prisonescaper\shapes.hpp
 	"Vectors.hpp"
 
 1533929718 c:\users\bondg_000\desktop\prisonescaper\room.hpp
@@ -879,7 +879,7 @@
 
 1533929724 c:\users\bondg_000\desktop\prisonescaper\platform.hpp
 
-1534017248 c:\users\bondg_000\desktop\prisonescaper\object.hpp
+1534363754 c:\users\bondg_000\desktop\prisonescaper\object.hpp
 	<typeinfo>
 	"Vectors.hpp"
 	"TextureManager.hpp"
@@ -902,8 +902,9 @@
 	"Room.hpp"
 	"Cannon.hpp"
 
-1534008086 c:\users\bondg_000\desktop\prisonescaper\cannon.hpp
+1534363963 c:\users\bondg_000\desktop\prisonescaper\cannon.hpp
 	"Object.hpp"
+	"WallTurret.hpp"
 
 1534002246 c:\users\bondg_000\desktop\prisonescaper\lightemitter.hpp
 	"Object.hpp"
@@ -912,7 +913,7 @@
 
 1534010857 c:\users\bondg_000\desktop\prisonescaper\texturesinfo.hpp
 
-1534361820 c:\users\bondg_000\desktop\prisonescaper\wallturret.hpp
+1534363802 c:\users\bondg_000\desktop\prisonescaper\wallturret.hpp
 	"TextureManager.hpp"
 	"Object.hpp"
 

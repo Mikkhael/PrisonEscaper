@@ -2,7 +2,7 @@
 #define CANNON_HPP_INCLUDED
 
 #include "Object.hpp"
-
+#include "WallTurret.hpp"
 
 class Cannonball : public SpriteActor, public ActorCollection<Cannonball>
 {
@@ -18,7 +18,16 @@ public:
 	{
 	    updateSubstepKinematics(deltaTime, 2, [this](double deltaTime)
         {
+            WallTurret::iterate([&](WallTurret& wt)
+            {
+                handleCollision(*this, wt, [&](Collision::Result result, Cannonball& cannonball, WallTurret& wallTurret)
+                {
+                    wallTurret.setPosition({-100, -100});
+                });
+                return false;
+            });
             moveOutOfWalls(platforms);
+            
         });
 	}
 	
