@@ -16,6 +16,7 @@ public:
         img.createMaskFromColor(sf::Color::Magenta);
         sf::Texture* T = new sf::Texture;
         T->loadFromImage(img);
+        T->setSmooth(false);
         if(repeat)
         {
             T->setRepeated(true);

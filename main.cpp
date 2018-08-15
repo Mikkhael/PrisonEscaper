@@ -43,11 +43,10 @@ int main()
 	std::cout << "Spawning player..." << std::endl;
 	Player player(Vector2d(70, 50));
 	
-	/*
+	
 	WallTurret::spawn(new WallTurret(WallTurret::Left, {50, 60}));
-	WallTurret::spawn(new WallTurret(WallTurret::Left, {100, 60}));
 	WallTurret::spawn(new WallTurret(WallTurret::Up, {200, 15}));
-    */
+    
     
 	sf::Clock clock;
     double deltaTime   = 0;
@@ -89,7 +88,7 @@ int main()
 		
 		player.update(deltaTime);
         Cannonball::updateAll(deltaTime);
-        //WallTurret::updateAll(deltaTime);
+        WallTurret::updateAll(deltaTime);
         
         
         // Draw
@@ -102,7 +101,7 @@ int main()
             platform.draw(window);
         }
         */
-        //WallTurret::drawAll(window);
+        WallTurret::drawAll(window);
 		Cannonball::drawAll(window);
         player.draw(window);
         

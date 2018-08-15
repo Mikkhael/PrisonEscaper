@@ -67,8 +67,10 @@
 		<Unit filename="Room.hpp" />
 		<Unit filename="Shapes.hpp" />
 		<Unit filename="TextureManager.hpp" />
+		<Unit filename="TexturesInfo.hpp" />
 		<Unit filename="Vectors.hpp" />
 		<Unit filename="WallActor.hpp" />
+		<Unit filename="WallTurret.hpp" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />
