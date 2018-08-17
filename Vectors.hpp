@@ -91,6 +91,17 @@ public:
         return *this;
     }
     
+    template<typename T_>
+    T dot(const Vector2<T_>& v) const
+    {
+        return x*v.x + y*v.y;
+    }
+    template<typename T_>
+    T cross(const Vector2<T_>& v) const
+    {
+        return x*v.y - y*v.x;
+    }
+    
     Vector2 sort() const
     {
     	if(x < y)

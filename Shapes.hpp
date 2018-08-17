@@ -104,6 +104,69 @@ public:
 };
 
 
+template<class T>
+class Line
+{
+public:
+    
+    Vector2<T> point1;
+    Vector2<T> point2;
+    
+    Line<T> move(const Vector2<T>& v) const
+    {
+        return Line<T>(point1 + v, point2 + v);
+    }
+    Line<T>& moveSelf(Vector2<T> v)
+    {
+        point1 += v;
+        point2 += v;
+        return *this;
+    }
+    Line<T> scale(const Vector2<T>& v) const
+    {
+        return Line<T>(point1 * v, point2 * v);
+    }
+    Line<T>& scaleSelf(Vector2<T> v)
+    {
+        point1 *= v;
+        point2 *= v;
+        return *this;
+    }
+    Line<T> rotate(double angle) const
+    {
+        return Line<T>(point1.rotate(angle), point2.rotate(angle));
+    }
+    Line<T>& rotateSelf(double angle)
+    {
+        point1.rotateSelf(angle);
+        point2.rotateSelf(angle);
+        return *this;
+    }    
+    
+    Vector2<T> toVector() const
+    {
+        return point2 - point1;
+    }
+    long double length() const
+    {
+        return toVector().magnatude();
+    }
+    long double lengthSquared() const
+    {
+        return toVector().magnatudeSquared();
+    }
+    
+    
+    Line(const Vector2<T>& vector)
+        : point1(Vectors::null), point2(vector)
+    {}
+    
+    Line(const Vector2<T>& p1, const Vector2<T>& p2)
+        : point1(p1), point2(p2)
+    {}
+};
+
+
 template <class T>
 class SimpleSegment
 {
@@ -198,6 +261,11 @@ public:
             position.x = val;
         else
             position.y = val;
+	}
+	
+	Line<T> toLine() const
+	{
+	    return Line<T>(position, getEnd());
 	}
 	
 	Rect<T> toRect() const

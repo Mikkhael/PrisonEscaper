@@ -6,11 +6,12 @@
 using eType = double;
 
 /*
-            Pnt     SSeg    Rect    Circ
+            Pnt     SSeg    Rect    Circ    Line
     Pnt              C      FC      FC
-    SSeg     C       C       C       C
+    SSeg     C       C       C       C       C
     Rect    FC       C      FC      FC
     Circ    FC       C      FC      FC
+    Line             C                       C
 
 
 
@@ -146,7 +147,15 @@ namespace Collision
 				return r1;
 			return r2;
 		}
+		
 	};
+	
+    std::ostream& operator<<(std::ostream& cout, const Result& r)
+    {
+        cout << "Result: " << r.value << "   " << r.getPenetrationVector() << " - " << r.distance;
+        return cout; 
+    }
+
 	
 	// Point - Range
 	template <class T>
@@ -406,6 +415,74 @@ namespace Collision
 	}
 	template <class T>
 	Result test( const Circle<T>& circle, const SimpleSegment<T>& ssegment){return -test(ssegment, circle);}
+	
+	// Line - Line
+	template <class T>
+	Result test(const Line<T>& line1, const Line<T>& line2)
+	{
+        Vector2<T> pDiff = line2.point1 - line1.point1;
+        double vCross = line1.toVector().cross(line2.toVector());
+        if(vCross == 0)
+        {
+            if(pDiff.cross(line1.toVector()) == 0)
+            {
+                
+                Result rx = test(Vector2<T>(line1.point1.x, line1.point2.x), Vector2<T>(line2.point1.x, line2.point2.x));
+                Result ry = test(Vector2<T>(line1.point1.y, line1.point2.y), Vector2<T>(line2.point1.y, line2.point2.y));
+                
+                return Result(rx && ry, rx.distance, ry.distance, std::sqrt(rx*rx+ ry*ry));
+            }
+            else
+            {
+                return Result(false);
+            }
+        }
+        else
+        {
+            double s1 = pDiff.cross(line2.toVector()) / vCross;
+            double s2 = pDiff.cross(line1.toVector()) / vCross;
+            
+            Vector2d penetration;
+            if(s1 > 0.5)
+            {
+                penetration = (line1.point1 + line1.toVector() * s1) - line1.point2;
+            }
+            else
+            {
+                penetration = line1.toVector() * -s1;
+            }
+            double distance = ((s2 > 0.5 ? 1-s2 : s2) * line2.toVector()).magnatude();
+            
+            return Result(s1 >= 0 && s1 <= 1 && s2 >= 0 && s2 <= 1, penetration.x, penetration.y, distance);
+        }
+	}
+	
+	// Line - Rect
+	template <class T>
+	Result test(const Line<T>& line, const Rect<T>& rect)
+	{
+        return Result(false);		
+	}
+	template <class T>
+	Result test(const Rect<T>& rect, const Line<T>& line){return -test(line, rect);}
+	
+	// Line - Circle
+	template <class T>
+	Result test(const Line<T>& line, const Circle<T>& circle)
+	{
+        return Result(false);		
+	}
+	template <class T>
+	Result test(const Circle<T>& circle, const Line<T>& line){return -test(line, circle);}
+	
+	// Line - SSegment
+	template <class T>
+	Result test(const Line<T>& line, const SimpleSegment<T>& ssegment)
+	{
+        return test(line, ssegment.toLine());
+	}
+	template <class T>
+	Result test(const SimpleSegment<T>& ssegment, const Line<T>& line){return -test(line, ssegment);}
 }
 
 class Collider;
@@ -470,6 +547,17 @@ protected:
         positionedCollider = SimpleSegment<double>((position * scale) + collider.position, scale.x * collider.length, collider.isVertical);
     }
     
+    static void _getPositionedCollider(const Line<double>& collider, Line<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, double rotation)
+    {
+        
+        Line<double> newCollider = collider;
+        newCollider.scaleSelf(scale);
+        newCollider.rotateSelf(rotation);
+        newCollider.moveSelf(position);
+        
+        positionedCollider = newCollider;
+    }
+    
 public:
     virtual const Collider* getCollider() const
     {
@@ -482,6 +570,7 @@ public:
     virtual Collision::Result test(const Rect<double>&) const =0;
     virtual Collision::Result test(const Circle<double>&) const =0;
     virtual Collision::Result test(const SimpleSegment<double>&) const =0;
+    virtual Collision::Result test(const Line<double>&) const =0;
     virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, double rotation = 0) =0;
     void updateCollider(const Transformable& transform)
     {
@@ -531,6 +620,10 @@ public:
     {
         return Collision::test(c, positionedCollider);
     }
+    virtual Collision::Result test(const Line<double>& c) const
+    {
+        return Collision::test(c, positionedCollider);
+    }
     virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, double rotation = 0)
     {
         _getPositionedCollider(collider, positionedCollider, position, scale, rotation);
@@ -575,6 +668,10 @@ public:
     {
         return Collision::test(c, collider);
     }
+    virtual Collision::Result test(const Line<double>& c) const
+    {
+        return Collision::test(c, collider);
+    }
     virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, double rotation = 0)
     {
         return;
@@ -585,10 +682,12 @@ public:
 typedef ShapeCollider<Rect<double> >                RectCollider;
 typedef ShapeCollider<Circle<double> >              CircleCollider;
 typedef ShapeCollider<SimpleSegment<double> >       SimpleSegmentCollider;
+typedef ShapeCollider<Line<double> >                LineCollider;
 
 typedef FixedShapeCollider<Rect<double> >           FixedRectCollider;
 typedef FixedShapeCollider<Circle<double> >         FixedCircleCollider;
 typedef FixedShapeCollider<SimpleSegment<double> >  FixedSimpleSegmentCollider;
+typedef FixedShapeCollider<Line<double> >           FixedLineCollider;
 
 template<typename TObject1, typename TObject2, typename THandler>
 void handleCollision(TObject1& object1, TObject2& object2, THandler handler)

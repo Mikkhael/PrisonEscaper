@@ -9,6 +9,24 @@ bool tak = false;
 #include "Cannon.hpp"
 int main()
 {
+    
+    #ifdef COL_TEST
+    std::cout << "-------------------" << std::endl;
+    
+    
+    LineCollider a = LineCollider(Line<double>({0, 10}, {0, 100}));
+    LineCollider b = LineCollider(Line<double>({0, -100}, {0, 20}));
+    std::cout << a.test(b) << std::endl;
+    
+    std::cout << "-------------------" << std::endl;
+    #else
+    
+    
+    
+    
+    
+    
+    
     sf::RenderWindow window(sf::VideoMode(800, 600), "Prison Escaper");
     
     const float zoom = 0.7;
@@ -112,5 +130,6 @@ int main()
         window.display();
     }
 
+    #endif // COL_TEST
     return 0;
 }

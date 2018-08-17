@@ -142,7 +142,6 @@ public:
                 
 				if(std::abs(result.distance) <= 1)
                 {
-                    std::cout << "V " << result.distance << std::endl;
 					return;
                 }
 				actor.velocity.x = 0;
@@ -151,7 +150,6 @@ public:
 			{
 				if(std::abs(result.distance) <= 1)
                 {
-                    std::cout << "H " << result.distance << std::endl;
 					return;
                 }
 				actor.velocity.y = 0;
