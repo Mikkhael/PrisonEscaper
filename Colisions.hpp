@@ -6,12 +6,13 @@
 using eType = double;
 
 /*
-            Pnt     SSeg    Rect    Circ    Line
-    Pnt              C      FC      FC
-    SSeg     C       C       C       C       C
-    Rect    FC       C      FC      FC
-    Circ    FC       C      FC      FC
-    Line             C                       C
+            Pnt     SSeg    Rect    Circ    Line    Poly
+    Pnt              C      FC      FC              FC
+    SSeg     C       C       C       C       C       C
+    Rect    FC       C      FC      FC       C       C
+    Circ    FC       C      FC      FC       C       C
+    Line             C       C       C       C       C
+    Poly    FC       C       C       C       C       C
 
 
 
@@ -93,7 +94,33 @@ namespace CollisionFast
     }
     template<class A, class B>
     bool test(const Rect<B>& b, const Circle<A>& a, eType eHorizontal = 0.0, eType eVertical = 0.0){return test(a, b, eHorizontal, eVertical);}
-
+    
+    
+    // Point - Poly
+    template<class A, class B>
+    bool test(const Vector2<A>& point, const Polygon<B>& poly)
+    {
+        if(!poly.isValid())
+        {
+            return false;
+        }
+        
+        Line<B> edge;
+        bool res = false;
+        for (unsigned int i = 0; i < poly.points.size(); i++) 
+        {
+            edge = poly.getEdgeLine(i);
+            if ( ((edge.point2.y > point.y) != (edge.point1.y > point.y)) &&
+                 (point.x < (edge.point1.x - edge.point2.x) * (point.y - edge.point2.y) / (edge.point1.y - edge.point2.y) + edge.point2.x) )
+            {
+                res = !res;
+            }
+        }
+        return res;
+    }
+    template<class A, class B>
+    bool test(const Polygon<B>& b, const Vector2<A>& a){return test(a, b);}
+    
 };
 
 namespace Collision
@@ -457,11 +484,214 @@ namespace Collision
         }
 	}
 	
+	// Poly - Point
+	template <class T>
+	Result test(const Polygon<T>& poly, const Vector2<T>& point)
+	{
+        if(!CollisionFast::test(poly, point))
+        {
+            return Result(false);
+        }
+        
+        if(poly.isConvex)
+        {
+            Vector2d mtv = Vectors::null;
+            double bestCross = 0;
+            double minDistance = -1;
+            bool set = false;
+            
+            for(unsigned int i=0; i<poly.points.size(); i++)
+            {
+                Line<T> edge = poly.getEdgeLine(i);
+                Vector2d pointVector = point - edge.point1;
+                Vector2d edgeVector = edge.toVector();
+                Vector2d edgeVectorUnit = edgeVector.normalize();
+                
+                long double mag2 = pointVector.magnatudeSquared();
+                if(minDistance < 0 || minDistance > mag2)
+                {
+                    minDistance = mag2;
+                }
+                
+                double tempCross = pointVector.cross(edgeVectorUnit);
+                if(!set || std::abs(bestCross) > std::abs(tempCross))
+                {
+                    set = true;
+                    double temp = edgeVectorUnit.x;
+                    edgeVectorUnit.x = edgeVectorUnit.y;
+                    edgeVectorUnit.x = -temp;
+                    
+                    mtv = edgeVectorUnit * tempCross;
+                    bestCross = tempCross;
+                }
+            }
+            return Result(true, mtv.x, mtv.y, bestCross, std::sqrt(minDistance));
+        }
+        
+        return Result(false);
+	}
+	template <class T>
+	Result test(const Vector2<T>& point, const Polygon<T>& poly){return -test(poly, point);}
+	
+	// Poly - Line
+	template <class T>
+	Result test(const Polygon<T>& poly, const Line<T>& line)
+	{
+	    if(!poly.isValid() || !poly.isConvex)
+        {
+            return Result(false);
+        }
+        
+        Vector2d mtv;
+        bool mtvSet = false;
+        
+	    for(unsigned int i=0; i < poly.points.size()+1; i++)
+        {
+            Vector2d normal;
+            if(i == poly.points.size())
+            {
+                normal = line.toVector().rotate90().normalize();
+            }
+            else
+            {
+                normal = poly.getEdgeVector(i).rotate90().normalize();
+            }
+            
+            Vector2d polyProjection;
+            for(unsigned int j=0; j<poly.points.size(); j++)
+            {
+                double dot = poly.getPoint(j).dot(normal);
+                if(j == 0)
+                {
+                    polyProjection = Vector2d(dot, dot);
+                }
+                else
+                {
+                    if(dot < polyProjection.x)
+                    {
+                        polyProjection.x = dot;
+                    }
+                    else if(dot > polyProjection.y)
+                    {
+                        polyProjection.y = dot;
+                    }
+                }
+            }
+            
+            Vector2d lineProjection = Vector2d(line.point1.dot(normal), line.point2.dot(normal));
+            
+            Result projectionResult = test(polyProjection, lineProjection);
+            if(projectionResult)
+            {
+                Vector2d tempMtv = projectionResult.distance * normal;
+                if(!mtvSet || mtv.magnatudeSquared() > tempMtv.magnatudeSquared())
+                {
+                    mtvSet = true;
+                    mtv = tempMtv;
+                }
+            }
+            else
+            {
+                return Result(false);
+            }
+        }
+        
+        return Result(true, mtv.x, mtv.y, 100);
+	}
+	template <class T>
+	Result test(const Line<T>& line, const Polygon<T>& poly){return -test(poly, line);}
+	
+	// Poly - Poly
+	template <class T>
+	Result test(const Polygon<T>& poly1, const Polygon<T>& poly2)
+	{
+        if(!poly1.isValid() || !poly1.isConvex || !poly2.isValid() || !poly2.isConvex)
+        {
+            return Result(false);
+        }
+        
+        Vector2d mtv;
+        bool mtvSet = false;
+        
+	    for(unsigned int i=0; i < poly1.points.size()+poly2.points.size(); i++)
+        {
+            Vector2d normal;
+            if(i >= poly1.points.size())
+            {
+                normal = poly2.getEdgeVector(i - poly1.points.size()).rotate90().normalize();
+            }
+            else
+            {
+                normal = poly1.getEdgeVector(i).rotate90().normalize();
+            }
+            
+            Vector2d polyProjection1;
+            for(unsigned int j=0; j<poly1.points.size(); j++)
+            {
+                double dot = poly1.getPoint(j).dot(normal);
+                if(j == 0)
+                {
+                    polyProjection1 = Vector2d(dot, dot);
+                }
+                else
+                {
+                    if(dot < polyProjection1.x)
+                    {
+                        polyProjection1.x = dot;
+                    }
+                    else if(dot > polyProjection1.y)
+                    {
+                        polyProjection1.y = dot;
+                    }
+                }
+            }
+            
+            Vector2d polyProjection2;
+            for(unsigned int j=0; j<poly2.points.size(); j++)
+            {
+                double dot = poly2.getPoint(j).dot(normal);
+                if(j == 0)
+                {
+                    polyProjection2 = Vector2d(dot, dot);
+                }
+                else
+                {
+                    if(dot < polyProjection2.x)
+                    {
+                        polyProjection2.x = dot;
+                    }
+                    else if(dot > polyProjection2.y)
+                    {
+                        polyProjection2.y = dot;
+                    }
+                }
+            }
+            
+            
+            Result projectionResult = test(polyProjection1, polyProjection2);
+            if(projectionResult)
+            {
+                Vector2d tempMtv = projectionResult.distance * normal;
+                if(!mtvSet || mtv.magnatudeSquared() > tempMtv.magnatudeSquared())
+                {
+                    mtvSet = true;
+                    mtv = tempMtv;
+                }
+            }
+            else
+            {
+                return Result(false);
+            }
+        }
+        
+        return Result(true, mtv.x, mtv.y, 100);
+	}
+	
 	// Line - Rect
 	template <class T>
 	Result test(const Line<T>& line, const Rect<T>& rect)
 	{
-        return Result(false);		
+        return test(line, rect.toPolygon());
 	}
 	template <class T>
 	Result test(const Rect<T>& rect, const Line<T>& line){return -test(line, rect);}
@@ -470,7 +700,28 @@ namespace Collision
 	template <class T>
 	Result test(const Line<T>& line, const Circle<T>& circle)
 	{
-        return Result(false);		
+        Vector2d a = circle.position - line.point1;
+        Vector2d b = line.toVector();
+        Vector2d b_unit = b.normalize();
+        
+        double asin = a.cross(b_unit);
+        if(std::abs(asin) > circle.radius)
+        {
+            return Result(false);
+        }
+        
+        double acos = a.dot(b_unit);
+        if(acos <= 0)
+        {
+            return test(line.point1, circle);
+        }
+        if(acos > line.length())
+        {
+            return test(line.point2, circle);
+        }
+        
+        return test(line.point1 + b_unit * acos, circle);
+        
 	}
 	template <class T>
 	Result test(const Circle<T>& circle, const Line<T>& line){return -test(line, circle);}
@@ -483,6 +734,87 @@ namespace Collision
 	}
 	template <class T>
 	Result test(const SimpleSegment<T>& ssegment, const Line<T>& line){return -test(line, ssegment);}
+	
+	// Poly - Rect
+	template <class T>
+	Result test(const Polygon<T>& poly, const Rect<T>& rect)
+	{
+        return test(poly, rect.toPolygon());
+	}
+	template <class T>
+	Result test(const Rect<T>& rect, const Polygon<T>& poly){return -test(poly, rect);}
+	
+	// Poly - Circle
+	template <class T>
+	Result test(const Polygon<T>& poly, const Circle<T>& circle)
+	{
+        if(!poly.isValid() || !poly.isConvex)
+        {
+            return Result(false);
+        }
+        
+        Vector2d mtv;
+        bool mtvSet = false;
+        
+	    for(unsigned int i=0; i < poly.points.size(); i++)
+        {
+            Vector2d normal;
+            normal = poly.getEdgeVector(i).rotate90().normalize();
+            
+            Vector2d polyProjection;
+            for(unsigned int j=0; j<poly.points.size(); j++)
+            {
+                double dot = poly.getPoint(j).dot(normal);
+                if(j == 0)
+                {
+                    polyProjection = Vector2d(dot, dot);
+                }
+                else
+                {
+                    if(dot < polyProjection.x)
+                    {
+                        polyProjection.x = dot;
+                    }
+                    else if(dot > polyProjection.y)
+                    {
+                        polyProjection.y = dot;
+                    }
+                }
+            }
+            
+            double circleCenterProjection = circle.position.dot(normal);
+            Vector2d circleProjection = Vector2d(circleCenterProjection - circle.radius, circleCenterProjection + circle.radius);
+            
+            Result projectionResult = test(polyProjection, circleProjection);
+            if(projectionResult)
+            {
+                Vector2d tempMtv = projectionResult.distance * normal;
+                if(!mtvSet || mtv.magnatudeSquared() > tempMtv.magnatudeSquared())
+                {
+                    mtvSet = true;
+                    mtv = tempMtv;
+                }
+            }
+            else
+            {
+                return Result(false);
+            }
+        }
+        
+        return Result(true, mtv.x, mtv.y, 100);		
+	}
+	template <class T>
+	Result test(const Circle<T>& circle, const Polygon<T>& poly){return -test(poly, circle);}
+	
+	// Poly - SSegment
+	template <class T>
+	Result test(const Polygon<T>& poly, const SimpleSegment<T>& ssegment)
+	{
+        return test(poly, ssegment.toLine() );
+	}
+	template <class T>
+	Result test(const SimpleSegment<T>& ssegment, const Polygon<T>& poly){return -test(poly, ssegment);}
+	
 }
 
 class Collider;
@@ -558,6 +890,17 @@ protected:
         positionedCollider = newCollider;
     }
     
+    static void _getPositionedCollider(const Polygon<double>& collider, Polygon<double>& positionedCollider, const Vector2<double>& position, const Vector2<double>& scale, double rotation)
+    {
+        
+        Polygon<double> newCollider = collider;
+        newCollider.scaleSelf(scale);
+        newCollider.rotateSelf(rotation);
+        newCollider.moveSelf(position);
+        
+        positionedCollider = newCollider;
+    }
+    
 public:
     virtual const Collider* getCollider() const
     {
@@ -571,6 +914,7 @@ public:
     virtual Collision::Result test(const Circle<double>&) const =0;
     virtual Collision::Result test(const SimpleSegment<double>&) const =0;
     virtual Collision::Result test(const Line<double>&) const =0;
+    virtual Collision::Result test(const Polygon<double>&) const =0;
     virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, double rotation = 0) =0;
     void updateCollider(const Transformable& transform)
     {
@@ -624,6 +968,10 @@ public:
     {
         return Collision::test(c, positionedCollider);
     }
+    virtual Collision::Result test(const Polygon<double>& c) const
+    {
+        return Collision::test(c, positionedCollider);
+    }
     virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, double rotation = 0)
     {
         _getPositionedCollider(collider, positionedCollider, position, scale, rotation);
@@ -672,6 +1020,10 @@ public:
     {
         return Collision::test(c, collider);
     }
+    virtual Collision::Result test(const Polygon<double>& c) const
+    {
+        return Collision::test(c, collider);
+    }
     virtual void updateCollider(const Vector2<double>& position = Vectors::null, const Vector2<double>& scale = Vectors::units, double rotation = 0)
     {
         return;
@@ -683,11 +1035,13 @@ typedef ShapeCollider<Rect<double> >                RectCollider;
 typedef ShapeCollider<Circle<double> >              CircleCollider;
 typedef ShapeCollider<SimpleSegment<double> >       SimpleSegmentCollider;
 typedef ShapeCollider<Line<double> >                LineCollider;
+typedef ShapeCollider<Polygon<double> >             PolygonCollider;
 
 typedef FixedShapeCollider<Rect<double> >           FixedRectCollider;
 typedef FixedShapeCollider<Circle<double> >         FixedCircleCollider;
 typedef FixedShapeCollider<SimpleSegment<double> >  FixedSimpleSegmentCollider;
 typedef FixedShapeCollider<Line<double> >           FixedLineCollider;
+typedef FixedShapeCollider<Polygon<double> >        FixedPolygonCollider;
 
 template<typename TObject1, typename TObject2, typename THandler>
 void handleCollision(TObject1& object1, TObject2& object2, THandler handler)

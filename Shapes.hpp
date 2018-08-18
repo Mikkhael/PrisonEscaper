@@ -24,6 +24,198 @@ public:
     }
 };
 
+
+template<class T>
+class Line
+{
+public:
+    
+    Vector2<T> point1;
+    Vector2<T> point2;
+    
+    Line<T> move(const Vector2<T>& v) const
+    {
+        return Line<T>(point1 + v, point2 + v);
+    }
+    Line<T>& moveSelf(Vector2<T> v)
+    {
+        point1 += v;
+        point2 += v;
+        return *this;
+    }
+    Line<T> scale(const Vector2<T>& v) const
+    {
+        return Line<T>(point1 * v, point2 * v);
+    }
+    Line<T>& scaleSelf(Vector2<T> v)
+    {
+        point1 *= v;
+        point2 *= v;
+        return *this;
+    }
+    Line<T> rotate(double angle) const
+    {
+        return Line<T>(point1.rotate(angle), point2.rotate(angle));
+    }
+    Line<T>& rotateSelf(double angle)
+    {
+        point1.rotateSelf(angle);
+        point2.rotateSelf(angle);
+        return *this;
+    }    
+    
+    Vector2<T> toVector() const
+    {
+        return point2 - point1;
+    }
+    long double length() const
+    {
+        return toVector().magnatude();
+    }
+    long double lengthSquared() const
+    {
+        return toVector().magnatudeSquared();
+    }
+    
+    
+    Line(const Vector2<T>& vector)
+        : point1(Vectors::null), point2(vector)
+    {}
+    
+    Line(const Vector2<T>& p1, const Vector2<T>& p2)
+        : point1(p1), point2(p2)
+    {}
+};
+
+
+template <typename T>
+class Polygon
+{
+public:
+    bool isConvex = false;
+    std::vector<Vector2<T> > points;
+    
+    const Vector2<T>& getPoint(unsigned int i) const
+    {
+        if(points.size() < 1)
+        {
+            throw 42;
+        }
+        
+        return points[i % points.size()];
+    }
+    Vector2<T>& getPointRef(unsigned int i)
+    {
+        if(points.size() < 1)
+        {
+            throw 42;
+        }
+        
+        return points[i % points.size()];
+    }
+    Vector2<T> getEdgeVector(unsigned int i) const
+    {
+        if(points.size() < 2)
+        {
+            throw 43;
+        }
+        
+        return points[(i+1) % points.size()] - points[i % points.size()];
+    }
+    Line<T> getEdgeLine(unsigned int i) const
+    {
+        if(points.size() < 2)
+        {
+            throw 44;
+        }
+        
+        return Line<T>(getPoint(i), getPoint(i+1));
+    }
+    
+    void append(const Vector2<T>& point)
+    {
+        points.push_back(point);
+    }
+    
+    void append(std::initializer_list<Vector2<T> > ls)
+    {
+        points.insert(points.end(), ls.begin(), ls.end());
+    }
+    
+    void reset()
+    {
+        points.erase(points.begin(), points.end());
+    }
+    
+    
+    bool isValid() const
+    {
+        return points.size() > 2;
+    }
+    
+    bool checkConvex()
+    {
+        double direction = 0;
+        for(std::size_t i=0; i<points.size(); i++)
+        {
+            double cross = getEdgeVector(i).cross(getEdgeVector(i+1));
+            if(direction == 0)
+            {
+                direction = cross;
+            }
+            else if(direction * cross < 0)
+            {
+                isConvex = false;
+                return false;
+            }
+        }
+        isConvex = true;
+        return true;
+    }    
+    
+    Polygon<T>& moveSelf(const Vector2<T>& v)
+    {
+        for(auto& point : points)
+        {
+            point += v;
+        }
+        return *this;
+    }
+    Polygon<T>& scaleSelf(const Vector2<T>& v)
+    {
+        for(auto& point : points)
+        {
+            point *= v;
+        }
+        return *this;
+    }
+    Polygon<T>& rotateSelf(double angle)
+    {
+        for(auto& point : points)
+        {
+            point.rotateSelf(angle);
+        }
+        return *this;
+    }
+    Polygon<T>& rotateSelf90(bool clockwise = true)
+    {
+        for(auto& point : points)
+        {
+            point.rotateSelf90(clockwise);
+        }
+        return *this;
+    }
+    
+    
+    Polygon(){}
+    
+    Polygon(std::initializer_list<Vector2<T> > points_)
+        : points(points_)
+    {
+        checkConvex();
+    }
+};
+
 template<class T>
 class Rect
 {
@@ -101,70 +293,13 @@ public:
         return rect;
 	}
 	
+	Polygon<T> toPolygon() const
+	{
+	    return Polygon<T>({getUpperLeft(), getUpperRight(), getBottomRight(), getBottomLeft()});
+	}
+	
 };
 
-
-template<class T>
-class Line
-{
-public:
-    
-    Vector2<T> point1;
-    Vector2<T> point2;
-    
-    Line<T> move(const Vector2<T>& v) const
-    {
-        return Line<T>(point1 + v, point2 + v);
-    }
-    Line<T>& moveSelf(Vector2<T> v)
-    {
-        point1 += v;
-        point2 += v;
-        return *this;
-    }
-    Line<T> scale(const Vector2<T>& v) const
-    {
-        return Line<T>(point1 * v, point2 * v);
-    }
-    Line<T>& scaleSelf(Vector2<T> v)
-    {
-        point1 *= v;
-        point2 *= v;
-        return *this;
-    }
-    Line<T> rotate(double angle) const
-    {
-        return Line<T>(point1.rotate(angle), point2.rotate(angle));
-    }
-    Line<T>& rotateSelf(double angle)
-    {
-        point1.rotateSelf(angle);
-        point2.rotateSelf(angle);
-        return *this;
-    }    
-    
-    Vector2<T> toVector() const
-    {
-        return point2 - point1;
-    }
-    long double length() const
-    {
-        return toVector().magnatude();
-    }
-    long double lengthSquared() const
-    {
-        return toVector().magnatudeSquared();
-    }
-    
-    
-    Line(const Vector2<T>& vector)
-        : point1(Vectors::null), point2(vector)
-    {}
-    
-    Line(const Vector2<T>& p1, const Vector2<T>& p2)
-        : point1(p1), point2(p2)
-    {}
-};
 
 
 template <class T>
@@ -275,5 +410,6 @@ public:
 		return Rect<T>(position, {length, 1});
 	}
 };
+
 
 #endif // SHAPES_HPP_INCLUDED

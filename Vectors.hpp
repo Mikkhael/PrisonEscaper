@@ -161,6 +161,28 @@ public:
         return *this;
     }
     
+    Vector2<T> rotate90(bool clockwise = true) const
+    {
+        return Vector2<T>(-y, x);
+    }
+    
+    Vector2<T>& rotateSelf90(bool clockwise = true)
+    {
+        if(clockwise)
+        {
+            T temp = x;
+            x = -y;
+            y = temp;
+        }
+        else
+        {
+            T temp = x;
+            x = y;
+            y = -temp;
+        }
+        return *this;
+    }
+    
     long double magnatudeSquared() const;
     long double magnatude() const;
     Vector2<double> normalize() const;
