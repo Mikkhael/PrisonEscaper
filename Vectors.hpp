@@ -264,16 +264,16 @@ Vector2<T>& Vector2<T>::normalizeSelf()
 template<typename T>
 Vector2<T> Vector2<T>::rotate(double angle) const
 {
-    auto c = std::cos(angle);
-    auto s = std::sin(angle);
+    auto c = std::cos(toRadians(angle));
+    auto s = std::sin(toRadians(angle));
     return Vector2<T>(c*x-s*y, c*y+s*x);
 }
 
 template<typename T>
 Vector2<T>& Vector2<T>::rotateSelf(double angle)
 {
-    auto c = std::cos(angle);
-    auto s = std::sin(angle);
+    auto c = std::cos(toRadians(angle));
+    auto s = std::sin(toRadians(angle));
     auto tx = x;
     x = c*x-s*y;
     y = c*y+s*tx;

@@ -24,7 +24,7 @@ namespace CollisionFast
 	
 	// Value in Range
     template<class A, class B>
-    bool test(const Vector2<A>& seg, B point, eType e = 0.0)
+    bool valueInRange(const Vector2<A>& seg, B point, eType e = 0.0)
     {
     	A mx = std::max(seg.x, seg.y);
     	A mn = std::min(seg.x, seg.y);
@@ -36,11 +36,11 @@ namespace CollisionFast
 				std::max(seg.x+e, seg.y-e) >= point;
     }
     template<class A, class B>
-    bool test(B point, const Vector2<A>& seg, eType e = 0.0){return test(seg,point,e);}
+    bool valueInRange(B point, const Vector2<A>& seg, eType e = 0.0){return valueInRange(seg,point,e);}
 
 	// Range intersection
     template<class A, class B>
-    bool test(const Vector2<A>& a, const Vector2<B>& b, eType e = 0.0)
+    bool rangeIntersection(const Vector2<A>& a, const Vector2<B>& b, eType e = 0.0)
     {
         return  std::min(a.x, a.y) + e < std::max(b.x, b.y) &&
 				std::max(a.x, a.y) - e > std::min(b.x, b.y);
@@ -50,8 +50,8 @@ namespace CollisionFast
     template<class A, class B>
     bool test(const Rect<A>& a, const Vector2<B>& b, eType eHorizontal = 0.0, eType eVertical = 0.0)
     {
-        return  test(a.getHorizontal(), b.x, eHorizontal) &&
-                test(a.getVertical(),   b.y, eVertical);
+        return  valueInRange(a.getHorizontal(), b.x, eHorizontal) &&
+                valueInRange(a.getVertical(),   b.y, eVertical);
     }
     template<class A, class B>
     bool test(const Vector2<B>& b, const Rect<A>& a, eType eHorizontal = 0.0, eType eVertical = 0.0){return test(a, b, eHorizontal, eVertical);}
@@ -60,8 +60,8 @@ namespace CollisionFast
     template<class A, class B>
     bool test(const Rect<A>& a, const Rect<B>& b, eType eHorizontal = 0.0, eType eVertical = 0.0)
     {
-        return  test(a.getHorizontal(), b.getHorizontal(), eHorizontal) &&
-                test(a.getVertical(),   b.getVertical(),   eVertical);
+        return  rangeIntersection(a.getHorizontal(), b.getHorizontal(), eHorizontal) &&
+                rangeIntersection(a.getVertical(),   b.getVertical(),   eVertical);
     }
 	
 	// Point in Circle
@@ -85,8 +85,8 @@ namespace CollisionFast
     bool test(const Circle<A>& a, const Rect<B>& b, eType eHorizontal = 0.0, eType eVertical = 0.0)
     {
     	eType eCorner = std::sqrt(eHorizontal*eHorizontal + eVertical*eVertical);
-        return  (test(b.getHorizontal(), a.center.x, eHorizontal) && test(Vector2<B>(b.position.y-a.radius,  b.position.y+b.size.y+a.radius),  a.center.y, eVertical  )) ||
-                (test(b.getVertical(),   a.center.y, eVertical  ) && test(Vector2<B>(b.position.x-a.radius,  b.position.x+b.size.x+a.radius),  a.center.x, eHorizontal)) ||
+        return  (valueInRange(b.getHorizontal(), a.center.x, eHorizontal) && valueInRange(Vector2<B>(b.position.y-a.radius,  b.position.y+b.size.y+a.radius),  a.center.y, eVertical  )) ||
+                (valueInRange(b.getVertical(),   a.center.y, eVertical  ) && valueInRange(Vector2<B>(b.position.x-a.radius,  b.position.x+b.size.x+a.radius),  a.center.x, eHorizontal)) ||
                 test(a, b.getUpperLeft(),   eCorner) ||
                 test(a, b.getUpperRight(),  eCorner) ||
                 test(a, b.getBottomLeft(),  eCorner) ||
@@ -132,6 +132,14 @@ namespace Collision
 		double distance     = 0;
 		bool   value        = false;
 		
+		void updateValue()
+		{
+		    if(xPenetration == 0 && yPenetration == 0)
+            {
+                value = false;
+            }
+		}
+		
 		operator bool() const
 		{
 			return value;
@@ -147,12 +155,15 @@ namespace Collision
 			return Vector2<double>(xPenetration, yPenetration);
 		}
 		
-		Result(bool v = false, double x = 0, double y = 0, double dist = 0)
+		Result(bool value_ = false)
+            : value(value_)
+		{}
+		
+		Result(bool v, double x, double y, double dist = 0)
 			: xPenetration(x), yPenetration(y), distance(dist), value(v)
-		{}
-		Result(double x, double y, double dist = 0)
-			: xPenetration(x), yPenetration(y), distance(dist), value(x != 0 || y != 0)
-		{}
+		{
+            updateValue();
+		}
 		
 		static const Result& getBetter(const Result& r1, const Result& r2)
 		{
@@ -182,23 +193,37 @@ namespace Collision
         cout << "Result: " << r.value << "   " << r.getPenetrationVector() << " - " << r.distance;
         return cout; 
     }
-
+	
+	struct Overlap
+	{
+	    bool isOverlaping = false;
+	    double value = 0;
+	    
+	    operator bool() const
+	    {
+	        return isOverlaping;
+	    }
+	    
+	    Overlap(bool isOverlaping_ = 0, double value_ = 0)
+            : isOverlaping(isOverlaping_) , value(value_)
+        {}
+	};
 	
 	// Point - Range
 	template <class T>
-	Result test( const T value, const Vector2<T>& range)
+	Overlap valueInRange( const T value, const Vector2<T>& range)
 	{
 		T lower  = value - std::min(range.x, range.y);
 		T higher = std::max(range.x, range.y) - value;
 		
-		return Result(lower >=0 && higher >= 0, 0, 0, lower<higher?-lower:higher);
+		return Overlap(lower >=0 && higher >= 0, lower<higher ? -lower : higher);
 	}
 	template <class T>
-	Result test(const Vector2<T>& range, const T value){return -test(value, range);}
+	Overlap valueInRange(const Vector2<T>& range, const T value){return -valueInRange(value, range);}
 	
 	// Range - Range
 	template <class T>
-	Result test(const Vector2<T>& range1, const Vector2<T>& range2)
+	Overlap rangeIntersection(const Vector2<T>& range1, const Vector2<T>& range2)
 	{
 		Vector2<T> r1 = range1.sort();
 		Vector2<T> r2 = range2.sort();
@@ -206,38 +231,17 @@ namespace Collision
 		T toLower  = r1.y - r2.x;
 		T toHigher = r2.y - r1.x;
 		
-		return Result( toLower >=0 && toHigher >= 0, 0, 0, (toLower<toHigher)?(-toLower):(toHigher));
+		return Overlap( toLower >=0 && toHigher >= 0 , toLower<toHigher ? -toLower : toHigher);
 	}
-	
-	// Point - SimpleSegment
-	template <class T>
-	Result test(const Vector2<T>& point, const SimpleSegment<T>& ssegment)
-	{
-	    Result r;
-		if(ssegment.isVertical)
-		{
-			r = test(point.y, ssegment.getRange());
-			r.distance = std::abs(point.x - ssegment.position.x);
-		}
-		else
-        {            
-			r = test(point.x, ssegment.getRange());
-			r.distance = std::abs(point.y - ssegment.position.y);
-        }
-		return r;
-	}
-	template <class T>
-	Result test( const SimpleSegment<T>& ssegment, const Vector2<T>& point){return -test(point, ssegment);}
-	
-	
+		
 	// Point - Rect
 	template <class T>
 	Result test(const Vector2<T>& point, const Rect<T>& rect)
 	{
-		Result horizontal 	= test(point.x, rect.getHorizontal());
-		Result vertical 	= test(point.y, rect.getVertical());
+		Overlap horizontal 	= valueInRange(point.x, rect.getHorizontal());
+		Overlap vertical 	= valueInRange(point.y, rect.getVertical());
 		
-		return Result(horizontal && vertical, horizontal.distance, vertical.distance);
+		return Result(horizontal && vertical, horizontal.value, vertical.value);
 	}
 	template <class T>
 	Result test( const Rect<T>& rect, const Vector2<T>& point){return -test(point, rect);}
@@ -247,17 +251,19 @@ namespace Collision
 	template <class T>
 	Result test(const SimpleSegment<T>& ssegment, const Rect<T>& rect)
 	{
-		Result hResult;
-		Result vResult;
+		Overlap hResult;
+		Overlap vResult;
 		if(ssegment.isVertical)
 		{
-			hResult = test(ssegment.position.x, rect.getHorizontal());
-			vResult = test(ssegment.getRange(), rect.getVertical());
-			return Result(hResult && vResult, hResult.distance, 0, vResult.distance);
+			hResult = valueInRange(ssegment.position.x, rect.getHorizontal());
+			vResult = rangeIntersection(ssegment.getRange(), rect.getVertical());
+			
+			return Result(hResult && vResult, hResult.value, 0, vResult.value);
 		}
-        hResult = test(ssegment.getRange(), rect.getHorizontal());
-        vResult = test(ssegment.position.y, rect.getVertical());
-        return Result(hResult && vResult, 0, vResult.distance, hResult.distance);
+        hResult = rangeIntersection(ssegment.getRange(), rect.getHorizontal());
+        vResult = valueInRange(ssegment.position.y, rect.getVertical());
+        
+        return Result(hResult && vResult, 0, vResult.value, hResult.value);
 	}
 	template <class T>
 	Result test( const Rect<T>& rect, const SimpleSegment<T>& ssegment){return -test(ssegment, rect);}
@@ -270,38 +276,41 @@ namespace Collision
         {
             if(ssegment1.isVertical)
             {
-                Result r1 = test(ssegment1.getRange(), ssegment2.position.y);
-                Result r2 = test(ssegment1.position.x, ssegment2.getRange());
+                Overlap r1 = valueInRange(ssegment1.getRange(), ssegment2.position.y);
+                Overlap r2 = valueInRange(ssegment1.position.x, ssegment2.getRange());
                 
-                return Result(r1 && r2, r2.xPenetration, r1.xPenetration);
+                return Result(r1 && r2, r2.value, r1.value);
             }
             else
             {
-                Result r1 = test(ssegment1.getRange(), ssegment2.position.x);
-                Result r2 = test(ssegment1.position.y, ssegment2.getRange());
+                Overlap r1 = valueInRange(ssegment1.getRange(), ssegment2.position.x);
+                Overlap r2 = valueInRange(ssegment1.position.y, ssegment2.getRange());
                 
-                return Result(r1 && r2, r1.distance, r2.distance);
+                return Result(r1 && r2, r1.value, r2.value);
             }
         }
 		else
         {
-            Result rangeRes = test(ssegment1.getRange(), ssegment2.getRange());
+            Result result;
+            Overlap rangeRes = rangeIntersection(ssegment1.getRange(), ssegment2.getRange());
+            result.value = rangeRes.isOverlaping;
             if(ssegment1.isVertical)
             {
-                rangeRes.yPenetration   = rangeRes.distance;
-                rangeRes.xPenetration   = 0;
-                rangeRes.distance       = ssegment2.position.x - ssegment1.position.x;
+                result.yPenetration   = rangeRes.value;
+                result.xPenetration   = 0;
+                result.distance       = ssegment2.position.x - ssegment1.position.x;
             }
             else
             {
-                rangeRes.yPenetration   = 0;
-                rangeRes.xPenetration   = rangeRes.distance;
-                rangeRes.distance       = ssegment2.position.y - ssegment1.position.y;
+                result.yPenetration   = 0;
+                result.xPenetration   = rangeRes.value;
+                result.distance       = ssegment2.position.y - ssegment1.position.y;
             }
             if(maxDistance >= 0){
-                rangeRes.value = std::abs(rangeRes.distance) <= maxDistance; 
+                result.value = std::abs(result.distance) <= maxDistance; 
             }
-            return rangeRes;
+            result.updateValue();
+            return result;
         }
 	}
 	
@@ -309,10 +318,10 @@ namespace Collision
 	template <class T>
 	Result test(const Rect<T>& rect1, const Rect<T>& rect2)
 	{
-		Result horizontal 	= test(rect1.getHorizontal(), 	rect2.getHorizontal());
-		Result vertical 	= test(rect2.getVertical(), 	rect2.getVertical());
+		Overlap horizontal 	= rangeIntersection(rect1.getHorizontal(), 	rect2.getHorizontal());
+		Overlap vertical 	= rangeIntersection(rect2.getVertical(), 	rect2.getVertical());
 		
-		return Result(horizontal && vertical, horizontal.distance, vertical.distance);
+		return Result(horizontal && vertical, horizontal.value, vertical.value);
 	}
 	
 	// Point - Circle
@@ -351,38 +360,38 @@ namespace Collision
 	template <class T>
 	Result test(const Rect<T>& rect, const Circle<T>& circle)
 	{
-		Result vResult(false);
-		Result hResult(false);
-		if(CollisionFast::test(rect.getHorizontal(), circle.position.x))
+		Overlap vResult(false);
+		Overlap hResult(false);
+		if(valueInRange(rect.getHorizontal(), circle.position.x))
 		{
-			vResult = Collision::test(Vector2<T>(rect.position.y - circle.radius, rect.position.y + rect.size.y + circle.radius), circle.position.y);
+			vResult = valueInRange(Vector2<T>(rect.position.y - circle.radius, rect.position.y + rect.size.y + circle.radius), circle.position.y);
 		}
-		if(CollisionFast::test(rect.getVertical(),   circle.position.y))
+		if(valueInRange(rect.getVertical(),   circle.position.y))
 		{
-			hResult = Collision::test(Vector2<T>(rect.position.x - circle.radius, rect.position.x + rect.size.x  + circle.radius), circle.position.x);
+			hResult = valueInRange(Vector2<T>(rect.position.x - circle.radius, rect.position.x + rect.size.x  + circle.radius), circle.position.x);
 		}
 		
 		if(vResult)
 		{
 			if(hResult)
 			{
-				if(std::abs(vResult.distance) < std::abs(hResult.distance))
+				if(std::abs(vResult.value) < std::abs(hResult.value))
 				{
-					return Result(true, 0, vResult.distance);
+					return Result(true, 0, vResult.value);
 				}
 				else
 				{
-					return Result(true, hResult.distance, 0);
+					return Result(true, hResult.value, 0);
 				}
 			}
 			else
 			{
-				return Result(true, 0, vResult.distance);
+				return Result(true, 0, vResult.value);
 			}
 		}
 		else if(hResult)
 		{
-			return Result(true, hResult.distance, 0);
+			return Result(true, hResult.value, 0);
 		}
 		else
 		{
@@ -413,7 +422,7 @@ namespace Collision
 			}
 			
 			
-			return Collision::test(temp, circle);
+			return test(temp, circle);
 		}
 		
 	}
@@ -424,8 +433,8 @@ namespace Collision
 	template <class T>
 	Result test(const SimpleSegment<T>& ssegment, const Circle<T>& circle)
 	{
-	    Result simpleRes = Collision::test(ssegment.isVertical ? circle.position.y : circle.position.x, ssegment.getRange());
-	    auto distance = Collision::test(ssegment.isVertical ? circle.getRangeY() : circle.getRangeX(), ssegment.getRange()).distance;
+	    Overlap simpleRes = valueInRange(ssegment.isVertical ? circle.position.y : circle.position.x, ssegment.getRange());
+	    double  distance  = rangeIntersection(ssegment.isVertical ? circle.getRangeY() : circle.getRangeX(), ssegment.getRange()).value;
         if(ssegment.isVertical && simpleRes)
         {
             auto dist = std::abs(circle.position.x - ssegment.position.x);
@@ -454,10 +463,10 @@ namespace Collision
             if(pDiff.cross(line1.toVector()) == 0)
             {
                 
-                Result rx = test(Vector2<T>(line1.point1.x, line1.point2.x), Vector2<T>(line2.point1.x, line2.point2.x));
-                Result ry = test(Vector2<T>(line1.point1.y, line1.point2.y), Vector2<T>(line2.point1.y, line2.point2.y));
+                Overlap rx = rangeIntersection(Vector2<T>(line1.point1.x, line1.point2.x), Vector2<T>(line2.point1.x, line2.point2.x));
+                Overlap ry = rangeIntersection(Vector2<T>(line1.point1.y, line1.point2.y), Vector2<T>(line2.point1.y, line2.point2.y));
                 
-                return Result(rx && ry, rx.distance, ry.distance, std::sqrt(rx*rx+ ry*ry));
+                return Result(rx && ry, rx.value, ry.value, std::sqrt(rx*rx+ ry*ry));
             }
             else
             {
@@ -548,42 +557,22 @@ namespace Collision
 	    for(unsigned int i=0; i < poly.points.size()+1; i++)
         {
             Vector2d normal;
-            if(i == poly.points.size())
+            if(i == 0)
             {
                 normal = line.toVector().rotate90().normalize();
             }
             else
             {
-                normal = poly.getEdgeVector(i).rotate90().normalize();
+                normal = poly.getNormal(i);
             }
             
-            Vector2d polyProjection;
-            for(unsigned int j=0; j<poly.points.size(); j++)
-            {
-                double dot = poly.getPoint(j).dot(normal);
-                if(j == 0)
-                {
-                    polyProjection = Vector2d(dot, dot);
-                }
-                else
-                {
-                    if(dot < polyProjection.x)
-                    {
-                        polyProjection.x = dot;
-                    }
-                    else if(dot > polyProjection.y)
-                    {
-                        polyProjection.y = dot;
-                    }
-                }
-            }
-            
+            Vector2d polyProjection = poly.getProjectionRange(normal);            
             Vector2d lineProjection = Vector2d(line.point1.dot(normal), line.point2.dot(normal));
             
-            Result projectionResult = test(polyProjection, lineProjection);
+            Overlap projectionResult = rangeIntersection(polyProjection, lineProjection);
             if(projectionResult)
             {
-                Vector2d tempMtv = projectionResult.distance * normal;
+                Vector2d tempMtv = projectionResult.value * normal;
                 if(!mtvSet || mtv.magnatudeSquared() > tempMtv.magnatudeSquared())
                 {
                     mtvSet = true;
@@ -595,7 +584,6 @@ namespace Collision
                 return Result(false);
             }
         }
-        
         return Result(true, mtv.x, mtv.y, 100);
 	}
 	template <class T>
@@ -618,60 +606,22 @@ namespace Collision
             Vector2d normal;
             if(i >= poly1.points.size())
             {
-                normal = poly2.getEdgeVector(i - poly1.points.size()).rotate90().normalize();
+                normal = poly2.getNormal(i - poly1.points.size());
             }
             else
             {
-                normal = poly1.getEdgeVector(i).rotate90().normalize();
-            }
-            
-            Vector2d polyProjection1;
-            for(unsigned int j=0; j<poly1.points.size(); j++)
-            {
-                double dot = poly1.getPoint(j).dot(normal);
-                if(j == 0)
-                {
-                    polyProjection1 = Vector2d(dot, dot);
-                }
-                else
-                {
-                    if(dot < polyProjection1.x)
-                    {
-                        polyProjection1.x = dot;
-                    }
-                    else if(dot > polyProjection1.y)
-                    {
-                        polyProjection1.y = dot;
-                    }
-                }
-            }
-            
-            Vector2d polyProjection2;
-            for(unsigned int j=0; j<poly2.points.size(); j++)
-            {
-                double dot = poly2.getPoint(j).dot(normal);
-                if(j == 0)
-                {
-                    polyProjection2 = Vector2d(dot, dot);
-                }
-                else
-                {
-                    if(dot < polyProjection2.x)
-                    {
-                        polyProjection2.x = dot;
-                    }
-                    else if(dot > polyProjection2.y)
-                    {
-                        polyProjection2.y = dot;
-                    }
-                }
+                normal = poly1.getNormal(i);
             }
             
             
-            Result projectionResult = test(polyProjection1, polyProjection2);
+            Vector2d polyProjection1 = poly1.getProjectionRange(normal);
+            Vector2d polyProjection2 = poly2.getProjectionRange(normal);
+            
+            
+            Overlap projectionResult = rangeIntersection(polyProjection1, polyProjection2);
             if(projectionResult)
             {
-                Vector2d tempMtv = projectionResult.distance * normal;
+                Vector2d tempMtv = projectionResult.value * normal;
                 if(!mtvSet || mtv.magnatudeSquared() > tempMtv.magnatudeSquared())
                 {
                     mtvSet = true;
@@ -758,37 +708,17 @@ namespace Collision
         
 	    for(unsigned int i=0; i < poly.points.size(); i++)
         {
-            Vector2d normal;
-            normal = poly.getEdgeVector(i).rotate90().normalize();
+            Vector2d normal = poly.getNormal(i);
             
-            Vector2d polyProjection;
-            for(unsigned int j=0; j<poly.points.size(); j++)
-            {
-                double dot = poly.getPoint(j).dot(normal);
-                if(j == 0)
-                {
-                    polyProjection = Vector2d(dot, dot);
-                }
-                else
-                {
-                    if(dot < polyProjection.x)
-                    {
-                        polyProjection.x = dot;
-                    }
-                    else if(dot > polyProjection.y)
-                    {
-                        polyProjection.y = dot;
-                    }
-                }
-            }
+            Vector2d polyProjection = poly.getProjectionRange(normal);
             
             double circleCenterProjection = circle.position.dot(normal);
             Vector2d circleProjection = Vector2d(circleCenterProjection - circle.radius, circleCenterProjection + circle.radius);
             
-            Result projectionResult = test(polyProjection, circleProjection);
+            Overlap projectionResult = rangeIntersection(polyProjection, circleProjection);
             if(projectionResult)
             {
-                Vector2d tempMtv = projectionResult.distance * normal;
+                Vector2d tempMtv = projectionResult.value * normal;
                 if(!mtvSet || mtv.magnatudeSquared() > tempMtv.magnatudeSquared())
                 {
                     mtvSet = true;

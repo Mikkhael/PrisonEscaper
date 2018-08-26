@@ -3,8 +3,22 @@
 
 #include "Vectors.hpp"
 
+class Projectable
+{
+public:
+    virtual Vector2d getProjectionRange(const Vector2d& axis) const = 0;
+    virtual Vector2d getNormal(unsigned int i) const
+    {
+        return Vectors::null;
+    }
+    virtual unsigned int getNumberOfNormals()
+    {
+        return 0;
+    }
+};
+
 template<class T>
-class Circle
+class Circle : public Projectable
 {
 public:
     Vector2<T> position;
@@ -22,11 +36,17 @@ public:
     {
     	return Vector2<T>(position.y - radius, position.y + radius);
     }
+    
+    virtual Vector2d getProjectionRange(const Vector2d& axis) const
+    {
+        double centerProjection = axis.dot(position);
+        return Vector2d(centerProjection - radius, centerProjection + radius);
+    }
 };
 
 
 template<class T>
-class Line
+class Line : public Projectable
 {
 public:
     
@@ -77,6 +97,22 @@ public:
         return toVector().magnatudeSquared();
     }
     
+    virtual Vector2d getProjectionRange(const Vector2d& axis) const
+    {
+        return Vector2d(axis.dot(point1), axis.dot(point2));
+    }
+    
+    virtual unsigned int getNumberOfNormals() const
+    {
+        return 1;
+    }
+    
+    virtual Vector2d getNormal(unsigned int i) const
+    {
+        return toVector().rotate90().normalize();
+    }
+    
+    
     
     Line(const Vector2<T>& vector)
         : point1(Vectors::null), point2(vector)
@@ -89,7 +125,7 @@ public:
 
 
 template <typename T>
-class Polygon
+class Polygon : public Projectable
 {
 public:
     bool isConvex = false;
@@ -171,7 +207,7 @@ public:
         }
         isConvex = true;
         return true;
-    }    
+    }
     
     Polygon<T>& moveSelf(const Vector2<T>& v)
     {
@@ -206,6 +242,44 @@ public:
         return *this;
     }
     
+    
+    
+    
+    
+    virtual Vector2d getProjectionRange(const Vector2<T>& axis) const
+    {
+        Vector2d projection;
+        for(unsigned int j=0; j<points.size(); j++)
+        {
+            double dot = getPoint(j).dot(axis);
+            if(j == 0)
+            {
+                projection = Vector2d(dot, dot);
+            }
+            else
+            {
+                if(dot < projection.x)
+                {
+                    projection.x = dot;
+                }
+                else if(dot > projection.y)
+                {
+                    projection.y = dot;
+                }
+            }
+        }
+        return projection;
+    }
+    
+    virtual double getNumberOfNormals() const
+    {
+        return points.size() - 1;
+    }
+    
+    virtual Vector2<T> getNormal(unsigned int i) const
+    {
+        return getEdgeVector(i).rotate90().normalize();
+    }
     
     Polygon(){}
     

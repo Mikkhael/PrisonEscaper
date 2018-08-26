@@ -106,6 +106,7 @@ int main()
 		}
 		*/
 		
+		
 		player.update(deltaTime);
         Cannonball::updateAll(deltaTime);
         WallTurret::updateAll(deltaTime);

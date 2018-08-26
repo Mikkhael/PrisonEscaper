@@ -89,7 +89,7 @@ public:
 			if(Cannonball::shoot(pos, vel))
             {
                 isInFreefall = true;
-                velocity += vel.resize((stateManager.isInAir ? -1 : -0.3) * reactionForce);
+                //velocity += vel.resize((stateManager.isInAir ? -1 : -0.3) * reactionForce);
             }
 		}
 		step *= (isInFreefall ? freefallSpeed : speed) * deltaTime;
@@ -121,12 +121,22 @@ public:
 		: AnimatedSpriteActor(AnimatedSpritePresets::PlayerIdle)
 	{
 		setPosition(position);
+		/*
 		setCollider(Rect<double>(
                            (PlayerSprite::width - colliderWidth) / 2,
                            PlayerSprite::height - colliderHeight,
                            colliderWidth,
                            colliderHeight
                            ));
+        /**/
+        /**/
+        setCollider(Rect<double>(
+                           (PlayerSprite::width - colliderWidth) / 2,
+                           PlayerSprite::height - colliderHeight,
+                           colliderWidth,
+                           colliderHeight
+                           ).toPolygon());
+        /**/
 		mass = 500;
 		jumpForce = std::sqrt(mass * (colliderHeight) * 2);
 		

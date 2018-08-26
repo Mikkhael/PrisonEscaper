@@ -140,19 +140,21 @@ public:
             if(platform.collider.isVertical)
 			{
                 
-				if(std::abs(result.distance) <= 1)
+				if(std::abs(result.) <= 1)
                 {
-					return;
+					//return;
                 }
 				actor.velocity.x = 0;
+                //std::cout << result.getPenetrationVector() << std::endl;
 			}
 			else
 			{
 				if(std::abs(result.distance) <= 1)
                 {
-					return;
+					//return;
                 }
 				actor.velocity.y = 0;
+                //std::cout << result.getPenetrationVector() << std::endl;
 			}
             shift += moveOutOfWall(result, actor);
         });
